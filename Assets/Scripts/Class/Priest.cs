@@ -7,6 +7,7 @@ public class Priest : IClass
     // 스테이터스 초기값을 생성하고 플레이어 스테이터스에 대입
     public Priest(Player player)
     {
+        status = new Status();
         status.maxHp = 400;
         status.strength = 20;
         status.intelligence = 45;
@@ -18,7 +19,7 @@ public class Priest : IClass
     }
     public void AttackDamage(Player player)
     {
-        player.attackDamage = (int)(player.status.intelligence * 1.5);
+        player.Player_Data.attackDamage = (int)(player.status.intelligence * 1.5);
     }
     // 빛(아군 회복)
     public void ClassAbility()
@@ -28,5 +29,9 @@ public class Priest : IClass
     public void Set_Status(Player player, Status status)
     {
         player.status = status;
+    }
+    public void Update_Status(Status status)
+    {
+        this.status = status;
     }
 }

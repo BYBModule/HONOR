@@ -7,6 +7,7 @@ public class Millionaire : IClass
     // 스테이터스 초기값을 생성하고 플레이어 스테이터스에 대입
     public Millionaire(Player player)
     {
+        status = new Status();
         status.maxHp = 500;
         status.strength = 20;
         status.intelligence = 20;
@@ -18,7 +19,7 @@ public class Millionaire : IClass
     }
     public void AttackDamage(Player player)
     {
-        player.attackDamage = (int)(player.status.strength * 1.5);
+        player.Player_Data.attackDamage = (int)(player.status.strength * 1.5);
     }
 
     // 용병 고용(특수 승리)
@@ -28,5 +29,9 @@ public class Millionaire : IClass
     public void Set_Status(Player player, Status status)
     {
         player.status = status;
-    }    
+    }
+    public void Update_Status(Status status)
+    {
+        this.status = status;
+    }
 }

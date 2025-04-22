@@ -7,6 +7,7 @@ public class Paladin : IClass
     // 스테이터스 초기값을 생성하고 플레이어 스테이터스에 대입
     public Paladin(Player player)
     {
+        status = new Status();
         status.maxHp = 570;
         status.strength = 30;
         status.intelligence = 10;
@@ -18,7 +19,7 @@ public class Paladin : IClass
     }
     public void AttackDamage(Player player)
     {
-        player.attackDamage = (int)(player.status.strength* 1.5);
+        player.Player_Data.attackDamage = (int)(player.status.strength* 1.5);
     }
 
     // 기도(지정 보호막)
@@ -28,5 +29,9 @@ public class Paladin : IClass
     public void Set_Status(Player player, Status status)
     {
         player.status = status;
+    }
+    public void Update_Status(Status status)
+    {
+        this.status = status;
     }
 }

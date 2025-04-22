@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Status : MonoBehaviour
+public class Status
 {
     // 최대 체력
     public int maxHp;
