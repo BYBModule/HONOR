@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class Player : MonoBehaviour
     [SerializeField] private ClassName playerClass;
     // 플레이어 데이터를 저장하는 클래스
     private IClass player_Class;
+    // 플레이어 데이터
     private PlayerData playerData;
     // 플레이어 데이터 프로퍼티
     public PlayerData Player_Data => playerData;
@@ -43,8 +45,8 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-        if(player_Class == null)
-        {
+        // if(player_Class == null)
+        // {
             switch(playerClass)
             {
                 // 전사를 선택했다면
@@ -72,14 +74,22 @@ public class Player : MonoBehaviour
                     player_Class = new Millionaire(this);
                     break;
             }
-        }
-        if(player_Class != null)
-            Debug.Log($" 직업 : {playerClass}\n 공격력 : {playerData.attackDamage}\n 체력 : {status.maxHp}\n 힘 : {status.strength}\n 지능 : {status.intelligence}\n 적중 : {status.hitPercent}\n 회피 : {status.evasion}\n 행운 : {status.luck}");
+            //else
+            //{       
+            Debug.Log($" 직업 : {playerClass}\n 공격력 : {playerData.attackDamage}\n 체력 : {playerData.playerHp} / {status.maxHp}\n 힘 : {status.strength}\n 지능 : {status.intelligence}\n 적중 : {status.hitPercent}\n 회피 : {status.evasion}\n 행운 : {status.luck}");
+            //}
+        //}
     }
 
     // 수치를 업데이트 하기 위한 변수
     public void PlayerUpdate()
     {
         player_Class.Set_Status(this, status);
+    }
+    // 플레이어 사망
+    public void PlayerDead()
+    {
+        playerData.playerGold -= playerData.playerGold/10;
+        PlayerUpdate();
     }
 }
