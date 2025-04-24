@@ -44,7 +44,7 @@ public class DiceRoll : MonoBehaviour
     }
 
     // 주사위를 굴렸을 때 실행되는 메서드
-    private void RollDice()
+    public void RollDice()
     {
         // 주사위에 가해지는 힘을 받기위해 Kinematic값을 False로 전환
         rigidbody.isKinematic = false;

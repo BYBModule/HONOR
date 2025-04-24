@@ -3,6 +3,8 @@ using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
+    // 서버에서 받을 플레이어 ID
+    public int playerId;
     // 직업명
     public enum ClassName
     {
@@ -19,12 +21,13 @@ public class Player : MonoBehaviour
         // 대부호
         Millionaire,
     }
+    public BattlePhase battlePhase;
     // 플레이어 스텟
     [HideInInspector] public Status status;
     // 플레이어 클래스
     [SerializeField] private ClassName playerClass;
     // 플레이어 데이터를 저장하는 클래스
-    private IClass player_Class;
+    public IClass player_Class;
     // 플레이어 데이터
     private PlayerData playerData;
     // 플레이어 데이터 프로퍼티
@@ -74,11 +77,17 @@ public class Player : MonoBehaviour
                     player_Class = new Millionaire(this);
                     break;
             }
+            UpdateHp(0);
             //else
-            //{       
+            //{    
             Debug.Log($" 직업 : {playerClass}\n 공격력 : {playerData.attackDamage}\n 체력 : {playerData.playerHp} / {status.maxHp}\n 힘 : {status.strength}\n 지능 : {status.intelligence}\n 적중 : {status.hitPercent}\n 회피 : {status.evasion}\n 행운 : {status.luck}");
+            if(battlePhase.gameObject.activeSelf == false)
+            {
+                battlePhase.gameObject.SetActive(true);
+            }
             //}
         //}
+        
     }
 
     // 수치를 업데이트 하기 위한 변수
@@ -89,7 +98,19 @@ public class Player : MonoBehaviour
     // 플레이어 사망
     public void PlayerDead()
     {
-        playerData.playerGold -= playerData.playerGold/10;
-        PlayerUpdate();
+        if(playerData.playerGold != 0)
+        playerData.playerGold -= (int)playerData.playerGold/10;
+        UpdateHp(0);    
+    }
+    public void UpdateHp(int hp)
+    {
+        if(playerData.playerHp <= 0)
+        {
+            playerData.playerHp = status.maxHp;
+        }
+        else
+        {
+            playerData.playerHp += hp;
+        }
     }
 }

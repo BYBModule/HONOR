@@ -187,7 +187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &222725114
 Transform:
   m_ObjectHideFlags: 0
@@ -537,7 +537,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &738595332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1360,7 +1360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1539021619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1719,7 +1719,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1826801802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1732,6 +1732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee84b18eef738eb45a1e67affdf3f83f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerId: 0
   playerClass: 2
 --- !u!136 &1826801803
 CapsuleCollider:
@@ -2166,15 +2167,15 @@ GameObject:
   - component: {fileID: 9032002380941489486}
   - component: {fileID: 6538356972028100996}
   - component: {fileID: 4058656201075694388}
-  - component: {fileID: 9032002380941489487}
   - component: {fileID: 1401281545391761341}
+  - component: {fileID: 9032002380941489487}
   m_Layer: 0
   m_Name: Dice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5402003820571065067
 Transform:
   m_ObjectHideFlags: 0
@@ -2262,8 +2263,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1056060495}
-  maxRandomForceValue: 1200
-  startRollingForce: 600
+  maxRandomForceValue: 2000
+  startRollingForce: 1000
   diceFaceNum: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
