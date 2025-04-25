@@ -9,9 +9,9 @@ public class Warrior : IClass
     {
         status = new Status();
         status.maxHp = 500;
-        status.strength = 45;
+        status.strength = 38;
         status.intelligence = 20;
-        status.hitPercent = 20;
+        status.hitRate = 20;
         status.evasion = 20;
         status.luck = 20;
         Set_Status(player, status);

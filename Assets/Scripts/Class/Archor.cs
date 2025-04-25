@@ -12,7 +12,7 @@ public class Archor : IClass
         status.maxHp = 420;
         status.strength = 35;
         status.intelligence = 10;
-        status.hitPercent = 35;
+        status.hitRate = 35;
         status.evasion = 30;
         status.luck = 20;
         Set_Status(player, status);

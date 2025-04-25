@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
             UpdateHp(0);
             //else
             //{    
-            Debug.Log($" 직업 : {playerClass}\n 공격력 : {playerData.attackDamage}\n 체력 : {playerData.playerHp} / {status.maxHp}\n 힘 : {status.strength}\n 지능 : {status.intelligence}\n 적중 : {status.hitPercent}\n 회피 : {status.evasion}\n 행운 : {status.luck}");
+            Debug.Log($" 직업 : {playerClass}\n 공격력 : {playerData.attackDamage}\n 체력 : {playerData.playerHp} / {status.maxHp}\n 힘 : {status.strength}\n 지능 : {status.intelligence}\n 적중 : {status.hitRate}\n 회피 : {status.evasion}\n 행운 : {status.luck}");
             if(battlePhase.gameObject.activeSelf == false)
             {
                 battlePhase.gameObject.SetActive(true);

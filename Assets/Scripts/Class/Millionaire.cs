@@ -11,7 +11,7 @@ public class Millionaire : IClass
         status.maxHp = 500;
         status.strength = 20;
         status.intelligence = 20;
-        status.hitPercent = 20;
+        status.hitRate = 20;
         status.evasion = 25;
         status.luck = 40;
         Set_Status(player, status);

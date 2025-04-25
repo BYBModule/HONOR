@@ -9,7 +9,7 @@ public class Status
     // 지능
     public int intelligence;    
     // 적중
-    public int hitPercent;   
+    public int hitRate;   
     // 회피
     public int evasion;
     // 행운    

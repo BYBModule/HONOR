@@ -11,7 +11,7 @@ public class Paladin : IClass
         status.maxHp = 570;
         status.strength = 30;
         status.intelligence = 10;
-        status.hitPercent = 20;
+        status.hitRate = 20;
         status.evasion = 20;
         status.luck = 20;
         Set_Status(player, status);

@@ -11,7 +11,7 @@ public class Priest : IClass
         status.maxHp = 400;
         status.strength = 20;
         status.intelligence = 45;
-        status.hitPercent = 25;
+        status.hitRate = 25;
         status.evasion = 25;
         status.luck = 20;
         Set_Status(player, status);

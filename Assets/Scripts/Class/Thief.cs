@@ -11,7 +11,7 @@ public class Thief : IClass
         status.maxHp = 400;
         status.strength = 25;
         status.intelligence = 20;
-        status.hitPercent = 25;
+        status.hitRate = 25;
         status.evasion = 35;
         status.luck = 20;
         Set_Status(player, status);
