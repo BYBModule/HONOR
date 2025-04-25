@@ -7,4 +7,9 @@ public class SeceneChanger : MonoBehaviour
     {
         SceneManager.LoadScene("LobbyScene");
     }
+
+    public void NectScene()
+    {
+        SceneManager.LoadScene("InGameScene");
+    }
 }
