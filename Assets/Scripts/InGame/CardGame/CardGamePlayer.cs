@@ -7,9 +7,12 @@ using UnityEngine;
         // 플레이어 스탯
         public Status status;
 
+        // 직업명
         public string className;
         
+        // 플레이어 ID
         public int playerId;
+        
         // 체력
         public int hp;
         
@@ -20,16 +23,16 @@ using UnityEngine;
         public List<Card> cards;
 
         // 현재 플레이어 턴
-        public bool isPlayerturn = false;
+        public bool isPlayerturn;
         
         // CardGamePlayer 생성자
-        public CardGamePlayer(int hp, int attackDamage, string className, Status status)
+        public CardGamePlayer(int hp, int attackDamage, bool isPlayerturn, string className, Status status)
         {
             
             this.status = status;
             this.className = className;
             this.hp = hp;
             this.attackDamage = attackDamage;
-            isPlayerturn = !isPlayerturn;
+            this.isPlayerturn = isPlayerturn;
         }
     }
