@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -320,8 +319,6 @@ public class BattlePhase : MonoBehaviour
     // 카드 5장을 새로 나눠 가짐
     private void CardReset(CardGamePlayer upPlayer, CardGamePlayer downPlayer)
     {
-        Card bluf = Instantiate(cardPrefab.GetComponent<Card>(), cardSpawnPoint.position, Quaternion.identity);
-        bluf.Card_Effect = Card.CardEffect.Bluffing;
         if(upPlayer.cards == null)
         {
             upPlayer.cards = new List<Card>();
@@ -338,8 +335,7 @@ public class BattlePhase : MonoBehaviour
         // downPlayer가 어드벤티지를 가지고 있다면 1장 추가
         else if(Advantage(downPlayer, upPlayer))
         {
-            downPlayer.cards.Add(deck[Random.Range(0, deck.Length)]);
-            
+            downPlayer.cards.Add(deck[Random.Range(0, deck.Length)]);    
         }
         // 두 플레이어가 카드를 5장씩 나눠가짐
         for(int i = 0; i < 5; i++)
@@ -348,14 +344,23 @@ public class BattlePhase : MonoBehaviour
             downPlayer.cards.Add(deck[Random.Range(0, deck.Length)]);
         }
         // 모든 카드가 분배된 이후 블러핑 카드 1장을 추가로 가짐짐
-        upPlayer.cards.Add(bluf);
+        Card bluf = Instantiate(cardPrefab.GetComponent<Card>(), cardSpawnPoint.position, Quaternion.identity);
+        bluf.Card_Effect = Card.CardEffect.Bluffing;
+        bluf.SetUp(true);
         downPlayer.cards.Add(bluf);
+        bluf.transform.rotation = Quaternion.Euler(0, 0, 180);
+        bluf.SetUp(false);
+        upPlayer.cards.Add(bluf);
+
+
         for(int i = 0 ; i < upPlayer.cards.Count; i++)
         {
-            Instantiate(upPlayer.cards[i], player1SpawnPoint.position, Quaternion.identity, player1SpawnPoint);
+            upPlayer.cards[i].SetUp(false);
+            Instantiate(upPlayer.cards[i], player1SpawnPoint.position, Quaternion.Euler(0, 0, 180), player1SpawnPoint);    
         }
         for(int i = 0 ; i < downPlayer.cards.Count; i++)
         {
+            downPlayer.cards[i].SetUp(true);
             Instantiate(downPlayer.cards[i], player2SpawnPoint.position, Quaternion.identity, player2SpawnPoint);
         }
         

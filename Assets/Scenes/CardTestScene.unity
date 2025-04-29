@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardSpawnPoint: {fileID: 749740015}
-  cardPrefab: {fileID: 5171185321838343149, guid: 417e68bcac24b6c469dc5783fdc2a13c, type: 3}
+  cardPrefab: {fileID: 1905103435598503602, guid: 417e68bcac24b6c469dc5783fdc2a13c, type: 3}
   dicePrefab: {fileID: 0}
   button: {fileID: 1087412351}
   deck: []
@@ -412,6 +412,7 @@ MonoBehaviour:
   - {fileID: 1288072808}
   player1SpawnPoint: {fileID: 1739275507}
   player2SpawnPoint: {fileID: 1932204327}
+  selectCount: 0
 --- !u!4 &263285818
 Transform:
   m_ObjectHideFlags: 0
@@ -1380,7 +1381,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: aadff5b07367b6742921ea94715f8356, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -3644,8 +3645,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1739275506}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.4, z: -1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 5.4000244, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3750,7 +3751,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1932204326}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -2.5, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

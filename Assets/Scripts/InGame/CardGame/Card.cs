@@ -1,8 +1,10 @@
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    public TextMeshPro cardEffectText;
     // 카드
     public enum CardEffect
     {
@@ -13,7 +15,6 @@ public class Card : MonoBehaviour
         // 블러핑
         Bluffing = 2,
     }
-    // 카드 이미지를 가지고 있는 스프라이트 랜더러
     [HideInInspector] public GameObject card;
     // 카드의 앞면
     public GameObject cardFront;
@@ -21,18 +22,15 @@ public class Card : MonoBehaviour
     public GameObject cardBack;
     public CardEffect Card_Effect;
     
-    private bool isFront = false;
+    private bool isFront = true;
 
     public void SetUp(bool isFront)
     {
         this.isFront = isFront;
-        if(isFront)
-        {
-            card = cardFront;        
-        }
-        else
-        {
-            card = cardBack;
-        }
+        cardEffectText.text = Card_Effect.ToString();
+        cardFront.SetActive(isFront);
+        cardBack.SetActive(!isFront);
+        cardEffectText.gameObject.SetActive(isFront);
+
     }
 }
