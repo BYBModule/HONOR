@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,9 @@ public class DiceRoll : MonoBehaviour
 
     // 주사위 굴리기 버튼
     [SerializeField] Button button;
-
+    
+    // 주사위의 숫자를 나타내기위한 텍스트
+    public TextMeshProUGUI scoreText;
     // 주사위 회전 시 XYZ축으로 랜덤하게 힘을 가하기 위한 변수
     [SerializeField] private float maxRandomForceValue;
     
@@ -46,6 +49,7 @@ public class DiceRoll : MonoBehaviour
     // 주사위를 굴렸을 때 실행되는 메서드
     public void RollDice()
     {
+        rigidbody.useGravity = true;
         // 주사위에 가해지는 힘을 받기위해 Kinematic값을 False로 전환
         rigidbody.isKinematic = false;
 

@@ -5,8 +5,7 @@ public class DiceNumView : MonoBehaviour
 {
     // 주사위값을 가져올 DiceRoll변수
     DiceRoll dice;
-    // 주사위의 숫자를 나타내기위한 텍스트
-    [SerializeField] TextMeshProUGUI scoreText;
+
     void Awake()
     {
         // DiceRoll이 포함된 오브젝트를 연결
@@ -19,11 +18,12 @@ public class DiceNumView : MonoBehaviour
         {
             if(dice.diceFaceNum != 0)
             {
-                scoreText.text = dice.diceFaceNum.ToString();
+                dice.scoreText.text = dice.diceFaceNum.ToString();
+                dice.scoreText.gameObject.SetActive(true);
             }
             else
             {
-                scoreText.text = "0";
+                dice.scoreText.text = "0";
             }
         }
     }

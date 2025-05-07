@@ -23,4 +23,8 @@ public class CheckDiceNum : MonoBehaviour
             }
         }
     }
+    private void OnTriggerExit(Collider other)
+    {
+        dice.scoreText.gameObject.SetActive(false);
+    }
 }
