@@ -4,10 +4,13 @@ public class PlayerData
 {
     // 플레이어 체력
     public int playerHp;
+    
     // 플레이어 이름
     public string playerName;
+    
     // 플레이어 공격력
     public int attackDamage;
+    
     // 소지 골드
     public int playerGold;
 
