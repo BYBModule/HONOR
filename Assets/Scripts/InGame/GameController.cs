@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,8 +27,7 @@ public class GameController : MonoBehaviour
     public Button turnEnd;
     // 현재 턴을 기록해주는 텍스트
     public TextMeshProUGUI turnText;
-    // 플레이어 목록 리스트
-    public List<Player> players;
+    
     // 현재 턴인 플레이어
     private Player currentPlayer;
     // 행동 코스트
@@ -44,17 +41,48 @@ public class GameController : MonoBehaviour
     // 경과 시간
     private float elapsedTime;
     // 현재까지 진행된 턴
-    private bool currentTurn;
+    private bool currentTurn = true;
     // 턴 종료 체크
     private bool isTurnEnd;
     // 턴 시작 체크
-    private bool startTurn;
+    private bool startTurn = true;
+    
+    // 이동할 체크포인트
+    public GameObject moveCheckPoint;
+    
+    // 1층 플로어
+    public Transform startPosition;
+    
+    // 플레이어 시작지점
+    [SerializeField] private List<Transform> firstFloorPosition;
+    // 플레이어 목록 리스트
+    public List<Player> players;
 
-    FieldData field;
-
+    // 테스트용    
+    public GameObject dummyPlayer;
+    GameObject checkPoint;
+    private Dictionary<int, Transform> playerTransform = new Dictionary<int, Transform>();
+    public int currentCount = 0;
+    public int preCost = 0;
     void Awake()
     {
         turnEnd.onClick.AddListener(TurnEnd);
+        var firstFloor = startPosition.GetComponentInChildren<Transform>();
+        foreach(Transform floor in firstFloor)
+        {
+            firstFloorPosition.Add(floor);
+            playerTransform.Add(currentCount, floor);
+            currentCount++;
+        }
+        currentCount = 1;
+       
+    }
+    void Start()
+    {
+        dummyPlayer.transform.position = playerTransform[currentCount].position + Vector3.up;
+        dummyPlayer.transform.parent = playerTransform[currentCount]; 
+        //Instantiate(dummyPlayer, playerTransform[currentCount + 1].position + Vector3.up, Quaternion.identity, playerTransform[currentCount + 1]);    
+        checkPoint = Instantiate(moveCheckPoint, dummyPlayer.transform.position, Quaternion.identity, dummyPlayer.transform);
     }
     void Update()
     {    
@@ -67,11 +95,12 @@ public class GameController : MonoBehaviour
             {
                 turnLimit = (int)elapsedTime;
                 UpdateTurnText();
+                Action(CostAction.Move, 5);
             }
             if(currentTurn)
             {
-                currentTurn = false;
-                StartTurn();
+                // StartTurn();
+
             }
         }
     }
@@ -84,18 +113,17 @@ public class GameController : MonoBehaviour
     // 턴 제한시간을 출력합니다.
     private void UpdateTurnText()
     {
-        turnText.text = turnLimit.ToString();
+    //    turnText.text = turnLimit.ToString();
     }
     // 행동 코스트를 사용
     private void Action(CostAction currentPlayerAction, int Cost)
     {
-        
         switch(currentPlayerAction)
         {
             case CostAction.Move:
                 if(Cost > 1)
                 {
-                    PlayerMove(Cost);
+                    PlayerMove(dummyPlayer.transform, Cost);
                 }
                 else
                 {
@@ -177,21 +205,50 @@ public class GameController : MonoBehaviour
     }
 
     // 플레이어 발판 이동 처리
-    private void PlayerMove(int cost)
+    private void PlayerMove(Transform parant, int cost)
     {
-        
-        int preCost = cost;
-        while(!isTurnEnd)
+        int moveDistance;
+        if(preCost == 0)
+            preCost = cost;
+        moveDistance = currentCount;
+        if(Input.GetKeyDown(KeyCode.RightArrow))
         {
-            float pos = Input.GetAxisRaw("Horizontal");
-
-            preCost -= 1;
-            preCost += 1;
-
-            if(Input.GetKeyDown(KeyCode.Space))
+            if(preCost > 0)
             {
-                return;
+                preCost -= 1;
+                moveDistance += 1;
             }
         }
+        else if(Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if(preCost < cost)
+            {
+                preCost += 1;
+                moveDistance -= 1;
+            }
+        }
+        
+        if(moveDistance < 1)
+        {
+            currentCount = moveDistance + playerTransform.Count;
+        }
+        else if(moveDistance > playerTransform.Count)
+        {
+            currentCount = moveDistance - playerTransform.Count;
+        }
+        else
+        {
+            currentCount = moveDistance;
+        }
+        checkPoint.transform.parent = playerTransform[currentCount];
+        checkPoint.transform.position = playerTransform[currentCount].position;
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            dummyPlayer.transform.position = playerTransform[currentCount].position;
+            dummyPlayer.transform.parent = playerTransform[currentCount];
+            cost -= preCost;
+            return;
+        }
+        
     }
 }
