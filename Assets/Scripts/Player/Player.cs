@@ -44,6 +44,8 @@ public class Player : MonoBehaviour
     // 플레이어 현재 위치
     public int playerPosition;
     public Floor currentFloor;
+
+    public bool startPoint = true;
     // 플레이어 인스턴스
     public static Player Instance
     {
@@ -127,15 +129,15 @@ public class Player : MonoBehaviour
         }
     }
     // 일반, 보스필드 전환될 때 기본위치
-    public void FieldToFloor(Player player, Floor floor)
+    public void FieldToFloor(Floor floor)
     {
         if(floor == Floor.Normal)
         {
-            player.playerPosition = player.playerDefaultStartingPoint[0];
+            playerPosition = playerDefaultStartingPoint[0];
         }
         else if(floor == Floor.Boss)
         {
-            player.playerPosition = player.playerDefaultStartingPoint[1];
+            playerPosition = playerDefaultStartingPoint[1];
         }
     }
     // 플레이어가 있는 위치를 체크하는 메서드

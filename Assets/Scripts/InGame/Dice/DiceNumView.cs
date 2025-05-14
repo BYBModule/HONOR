@@ -23,7 +23,7 @@ public class DiceNumView : MonoBehaviour
             }
             else
             {
-                dice.scoreText.text = "0";
+                dice.scoreText.gameObject.SetActive(false);
             }
         }
     }

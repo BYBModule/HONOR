@@ -1,10 +1,10 @@
 using TMPro;
 using UnityEngine;
 
-public class CheckDiceNum : MonoBehaviour
+public class Dice : MonoBehaviour
 {
     // 회전하는 주사위
-    DiceRoll dice;
+    public DiceRoll dice;
     void Awake()
     {
         // DiceRoll이 포함된 오브젝트를 연결
@@ -20,12 +20,12 @@ public class CheckDiceNum : MonoBehaviour
             {
                 // 닿은 면의 반대에 있는 숫자를 dicFaceNum에 저장
                 dice.diceFaceNum = int.Parse(other.name);
+                dice.ChangeRigidBody();
             }
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        dice.scoreText.gameObject.SetActive(false);
     }
     public void DiceRolling()
     {

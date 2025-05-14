@@ -4,7 +4,9 @@ using UnityEngine;
 public class FieldUtility : MonoBehaviour
 {
     // 이동할 체크포인트
-    public GameObject checkPointPrefab;  
+    public GameObject checkPointPrefab;
+    //
+    public GameObject fieldCameraLook;  
     // 일반 필드 기준
     public Transform normalStartingPoint;   
     // 보스 필드 기준
@@ -90,7 +92,11 @@ public class FieldUtility : MonoBehaviour
     {
         return CurrentFloor(player)[player.playerPosition];
     }
-
+    public void PlayerStart(Player player)
+    {
+        player.transform.parent = normalField[player.playerPosition];
+        player.transform.position = normalField[player.playerPosition].position;
+    }
     // 플레이어의 이동을 처리하는 메서드
     public void PlayerMove(Player player, int cost)
     {
@@ -140,6 +146,21 @@ public class FieldUtility : MonoBehaviour
             cost -= preCost;
             return;
         }   
+    }
+    public Transform FieldCameraLookAt(Player player)
+    {
+        Transform result;
+        if(player.CheckFloor() == Player.Floor.Normal)
+        {
+            result = fieldCameraLook.GetComponent<Transform>().GetChild(0);
+            return result;
+        }
+        else if(player.CheckFloor() == Player.Floor.Boss)
+        {
+            result = fieldCameraLook.GetComponent<Transform>().GetChild(1);
+            return result;
+        }
+        return null;
     }
 
 }

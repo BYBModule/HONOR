@@ -30,24 +30,17 @@ public class DiceRoll : MonoBehaviour
         // 초기화
         Initialize();
     }
-
-    // 주사위 회전
-    private void RollingDice()
+    public void ChangeRigidBody()
     {
-        if(rigidbody != null)
-        {
-            RollDice();
-        }
-        
+        transform.localPosition = Vector3.up; 
+        rigidbody.useGravity = !rigidbody.useGravity;
+        rigidbody.isKinematic = !rigidbody.isKinematic;
     }
-
     // 주사위를 굴렸을 때 실행되는 메서드
     public void RollDice()
     {
-        rigidbody.useGravity = true;
-        // 주사위에 가해지는 힘을 받기위해 Kinematic값을 False로 전환
-        rigidbody.isKinematic = false;
-
+        diceFaceNum = 0;
+        ChangeRigidBody();
         // 각 축에 랜덤한 수 를 할당
         forceX = UnityEngine.Random.Range(0, maxRandomForceValue);
         forceY = UnityEngine.Random.Range(0, maxRandomForceValue);
@@ -65,5 +58,9 @@ public class DiceRoll : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody>();
         transform.rotation = new Quaternion(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), 0);
+        // 주사위가 중력작용을 받아 땅과 충돌하게 설정
+        rigidbody.useGravity = false;
+        // 주사위에 가해지는 힘을 받기위해 Kinematic값을 False로 전환
+        rigidbody.isKinematic = true;
     }
 }
