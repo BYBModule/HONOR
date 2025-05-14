@@ -27,4 +27,12 @@ public class CheckDiceNum : MonoBehaviour
     {
         dice.scoreText.gameObject.SetActive(false);
     }
+    public void DiceRolling()
+    {
+        dice.RollDice();
+    }
+    public int GetDiceNumber()
+    {
+        return dice.diceFaceNum;
+    }
 }

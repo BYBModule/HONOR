@@ -8,9 +8,6 @@ public class DiceRoll : MonoBehaviour
 {
     // 리지드 바디
     Rigidbody rigidbody;
-
-    // 주사위 굴리기 버튼
-    [SerializeField] Button button;
     
     // 주사위의 숫자를 나타내기위한 텍스트
     public TextMeshProUGUI scoreText;
@@ -26,12 +23,10 @@ public class DiceRoll : MonoBehaviour
     private float forceZ;
 
     // 주사위의 값
-    public int diceFaceNum;
+    public int diceFaceNum = 0;
     
     void Awake()
-    {
-        // 버튼 클릭 이벤트를 할당
-        button.onClick.AddListener(RollingDice);    
+    { 
         // 초기화
         Initialize();
     }

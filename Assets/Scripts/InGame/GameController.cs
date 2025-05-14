@@ -4,6 +4,9 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 현재 턴인 플레이어 체크(PlayerCheck) > 주사위굴리기 > 주사위를 굴린 이후 30초 카운트시작(제한시간) >
+// 행동 코스트 사용 (플레이어 이동(PlayerMove()), 직업 특수 능력 사용) > 턴 넘김 or 30초지남 > 이동위치에 플레이어 확인 > 
+// 게임승리, 사망 확인 > 다음 턴 플레이어 확인 > 플레이어 전환 > 처음으로부터 반복
 public class GameController : MonoBehaviour
 {
     public CinemachineCamera cinemachine;
@@ -39,54 +42,57 @@ public class GameController : MonoBehaviour
     // 턴 제한 시간
     private int turnLimit;
     // 경과 시간
-    private float elapsedTime;
+    private float elapsedTime = 0;
+    private float diceDelay = 0;
     // 현재까지 진행된 턴
     private bool currentTurn = true;
     // 턴 종료 체크
     private bool isTurnEnd;
     // 턴 시작 체크
-    private bool startTurn = true;
+    private bool startTurn = false;
     
-    // 이동할 체크포인트
-    public GameObject moveCheckPoint;
+
     
     // 1층 플로어
     public Transform startPosition;
-    
-    // 플레이어 시작지점
-    [SerializeField] private List<Transform> firstFloorPosition;
-    // 플레이어 목록 리스트
-    public List<Player> players;
+
+    // 플레이어 리스트
+    public List<Player> playerList;
 
     // 테스트용    
     public GameObject dummyPlayer;
-    GameObject checkPoint;
-    private Dictionary<int, Transform> playerTransform = new Dictionary<int, Transform>();
-    public int currentCount = 0;
+    
+    public List<Transform> playerStartField;
+
+    CheckDiceNum dice;
+    public FieldUtility fieldUtility;
+
+    // 플레이어 목록 리스트
+    private Dictionary<int, Player> players = new Dictionary<int, Player>();
+    
+    // 현재 Floor번호
+    public int currentFloorCount = 0;
+    public int currentPlayerCount = 0;
+    
     public int preCost = 0;
     void Awake()
     {
-        turnEnd.onClick.AddListener(TurnEnd);
-        var firstFloor = startPosition.GetComponentInChildren<Transform>();
-        foreach(Transform floor in firstFloor)
+        // turnEnd.onClick.AddListener(TurnEnd);
+        for(int i = 0; i < playerList.Count; i++)
         {
-            firstFloorPosition.Add(floor);
-            playerTransform.Add(currentCount, floor);
-            currentCount++;
+            players.Add(i, playerList[i]);
         }
-        currentCount = 1;
-       
     }
     void Start()
     {
-        dummyPlayer.transform.position = playerTransform[currentCount].position + Vector3.up;
-        dummyPlayer.transform.parent = playerTransform[currentCount]; 
-        //Instantiate(dummyPlayer, playerTransform[currentCount + 1].position + Vector3.up, Quaternion.identity, playerTransform[currentCount + 1]);    
-        checkPoint = Instantiate(moveCheckPoint, dummyPlayer.transform.position, Quaternion.identity, dummyPlayer.transform);
+        dice = dicePrefab.GetComponentInChildren<CheckDiceNum>();
+        fieldUtility.SetDefaultStartingPoint(playerList);
     }
     void Update()
-    {    
-        if(startTurn)
+    {   
+        if(diceDelay == 0)
+            StartTurn();
+        if(startTurn && diceDelay >= 5.0f)
         {
             // 경과시간을 기록
             elapsedTime += Time.deltaTime;
@@ -95,7 +101,7 @@ public class GameController : MonoBehaviour
             {
                 turnLimit = (int)elapsedTime;
                 UpdateTurnText();
-                Action(CostAction.Move, 5);
+                // Action(CostAction.Move, 5);
             }
             if(currentTurn)
             {
@@ -103,12 +109,6 @@ public class GameController : MonoBehaviour
 
             }
         }
-    }
-
-    // 승리
-    private void Victory()
-    {
-
     }
     // 턴 제한시간을 출력합니다.
     private void UpdateTurnText()
@@ -118,12 +118,13 @@ public class GameController : MonoBehaviour
     // 행동 코스트를 사용
     private void Action(CostAction currentPlayerAction, int Cost)
     {
+        // 시작 필드 체크
         switch(currentPlayerAction)
         {
             case CostAction.Move:
                 if(Cost > 1)
                 {
-                    PlayerMove(dummyPlayer.transform, Cost);
+                    // fieldUtility.PlayerMove(player, 5);
                 }
                 else
                 {
@@ -162,9 +163,20 @@ public class GameController : MonoBehaviour
     }
     void StartTurn()
     {
-        GameObject dice = Instantiate(dicePrefab, transform.position, Quaternion.identity, currentPlayer.transform);
-        actionCost = int.Parse(dice.GetComponent<DiceRoll>().scoreText.text);
-        startTurn = true;
+        if(!startTurn)
+        {
+            Debug.Log("StartTurn");
+
+            dice.DiceRolling();
+            currentPlayer = players[currentPlayerCount];
+            startTurn = true;
+        }
+        diceDelay += Time.deltaTime;
+        if(diceDelay > 4)
+        {
+            actionCost = dice.GetDiceNumber();
+        }
+        //actionCost = int.Parse(dice.GetComponent<DiceRoll>().scoreText.text);
     }
 
     // 스텟 코스트로 능력치를 조절
@@ -186,69 +198,73 @@ public class GameController : MonoBehaviour
     }
 
     // 턴 종료 처리
-    private void TurnEnd()
+    private void TurnEnd(int currentPlayerCount)
     {
-        // 턴 제한시간이 끝나거나, 턴 종료 버튼을 눌렀을 때
-        if(isTurnEnd)
+        if(currentPlayerCount < 3)
         {
-            turnCount += 1;
-            actionCost = 0;
-            statusCost = 0;
-            turnLimit = 0;
-            isTurnEnd = false;
-            startTurn = false;
+            currentPlayerCount++;
         }
         else
         {
+            currentPlayerCount = 0;
         }
-        isTurnEnd = true;
+    }
+
+    // 턴 전환 플레이어 체크
+    private void NextPlayerCheck(List<Player> players)
+    {
+
     }
 
     // 플레이어 발판 이동 처리
-    private void PlayerMove(Transform parant, int cost)
+    // private void PlayerMove(Transform parant, int cost)
+    // {
+        // int moveDistance;
+        // if(preCost == 0)
+            // preCost = cost;
+        // moveDistance = currentFloorCount;
+        // if(Input.GetKeyDown(KeyCode.RightArrow))
+        // {
+            // if(preCost > 0)
+            // {
+                // preCost -= 1;
+                // moveDistance += 1;
+            // }
+        // }
+        // else if(Input.GetKeyDown(KeyCode.LeftArrow))
+        // {
+            // if(preCost < cost)
+            // {
+                // preCost += 1;
+                // moveDistance -= 1;
+            // }
+        // }
+        // 
+        // if(moveDistance < 1)
+        // {
+            // currentFloorCount = moveDistance + playerTransform.Count;
+        // }
+        // else if(moveDistance > playerTransform.Count)
+        // {
+            // currentFloorCount = moveDistance - playerTransform.Count;
+        // }
+        // else
+        // {
+            // currentFloorCount = moveDistance;
+        // }
+        // checkPoint.transform.parent = playerTransform[currentFloorCount];
+        // checkPoint.transform.position = playerTransform[currentFloorCount].position;
+        // if(Input.GetKeyDown(KeyCode.Space))
+        // {
+            // dummyPlayer.transform.position = playerTransform[currentFloorCount].position;
+            // dummyPlayer.transform.parent = playerTransform[currentFloorCount];
+            // cost -= preCost;
+            // return;
+        // }    
+    // }
+    // 승리
+    private void Victory()
     {
-        int moveDistance;
-        if(preCost == 0)
-            preCost = cost;
-        moveDistance = currentCount;
-        if(Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if(preCost > 0)
-            {
-                preCost -= 1;
-                moveDistance += 1;
-            }
-        }
-        else if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if(preCost < cost)
-            {
-                preCost += 1;
-                moveDistance -= 1;
-            }
-        }
-        
-        if(moveDistance < 1)
-        {
-            currentCount = moveDistance + playerTransform.Count;
-        }
-        else if(moveDistance > playerTransform.Count)
-        {
-            currentCount = moveDistance - playerTransform.Count;
-        }
-        else
-        {
-            currentCount = moveDistance;
-        }
-        checkPoint.transform.parent = playerTransform[currentCount];
-        checkPoint.transform.position = playerTransform[currentCount].position;
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            dummyPlayer.transform.position = playerTransform[currentCount].position;
-            dummyPlayer.transform.parent = playerTransform[currentCount];
-            cost -= preCost;
-            return;
-        }
-        
+
     }
 }

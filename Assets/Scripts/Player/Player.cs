@@ -1,8 +1,15 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
+    public enum Floor
+    {
+        Normal,
+        Boss,
+    }
+    
     // 서버에서 받을 플레이어 ID
     public int playerId;
     // 직업명
@@ -32,6 +39,11 @@ public class Player : MonoBehaviour
     private PlayerData playerData;
     // 플레이어 데이터 프로퍼티
     public PlayerData Player_Data => playerData;
+    // 플레이어 진입 필드 기본값 (0 : 일반필드, 1 : 보스필드)
+    public int[] playerDefaultStartingPoint = new int [2];
+    // 플레이어 현재 위치
+    public int playerPosition;
+    public Floor currentFloor;
     // 플레이어 인스턴스
     public static Player Instance
     {
@@ -81,10 +93,10 @@ public class Player : MonoBehaviour
             //else
             //{    
             Debug.Log($" 직업 : {playerClass}\n 공격력 : {playerData.attackDamage}\n 체력 : {playerData.playerHp} / {status.maxHp}\n 힘 : {status.strength}\n 지능 : {status.intelligence}\n 적중 : {status.hitRate}\n 회피 : {status.evasion}\n 행운 : {status.luck}");
-            if(cardGameManager.gameObject.activeSelf == false)
-            {
-                cardGameManager.gameObject.SetActive(true);
-            }
+            // if(cardGameManager.gameObject.activeSelf == false)
+            // {
+            //     cardGameManager.gameObject.SetActive(true);
+            // }
             //}
         //}
         
@@ -95,13 +107,14 @@ public class Player : MonoBehaviour
     {
         player_Class.Set_Status(this, status);
     }
-    // 플레이어 사망
+    // 플레이어 사망처리
     public void PlayerDead()
     {
         if(playerData.playerGold != 0)
-        playerData.playerGold -= (int)playerData.playerGold/10;
+            playerData.playerGold -= (int)playerData.playerGold/10;
         UpdateHp(0);    
     }
+    // 체력 업데이트
     public void UpdateHp(int hp)
     {
         if(playerData.playerHp <= 0)
@@ -112,5 +125,26 @@ public class Player : MonoBehaviour
         {
             playerData.playerHp += hp;
         }
+    }
+    // 일반, 보스필드 전환될 때 기본위치
+    public void FieldToFloor(Player player, Floor floor)
+    {
+        if(floor == Floor.Normal)
+        {
+            player.playerPosition = player.playerDefaultStartingPoint[0];
+        }
+        else if(floor == Floor.Boss)
+        {
+            player.playerPosition = player.playerDefaultStartingPoint[1];
+        }
+    }
+    // 플레이어가 있는 위치를 체크하는 메서드
+    public Floor CheckFloor()
+    {
+        if(currentFloor == Floor.Normal)
+            return Floor.Normal;
+        else if(currentFloor == Floor.Boss)
+            return Floor.Boss;        
+        return default;
     }
 }
