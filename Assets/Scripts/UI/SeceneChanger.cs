@@ -8,7 +8,7 @@ public class SeceneChanger : MonoBehaviour
         SceneManager.LoadScene("LobbyScene");
     }
 
-    public void NectScene()
+    public void NextScene()
     {
         SceneManager.LoadScene("InGameScene");
     }
