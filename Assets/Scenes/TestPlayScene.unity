@@ -207,6 +207,8 @@ MonoBehaviour:
   playerDefaultStartingPoint: 0000000000000000
   playerPosition: 0
   currentFloor: 0
+  actionCost: 0
+  statusCost: 0
   startPoint: 1
 --- !u!1 &144438197
 GameObject:
@@ -241,11 +243,10 @@ MonoBehaviour:
   playerUI: {fileID: 1153796645}
   dicePrefab: {fileID: 1240976694}
   shopPrefab: {fileID: 0}
+  checkPointPrefab: {fileID: 2640308178845762621, guid: 16494ada38096684badc0a8efd050c44, type: 3}
   turnEnd: {fileID: 1336198613}
   turnText: {fileID: 580660712}
   currentTurnCount: {fileID: 421315943}
-  actionCost: 0
-  statusCost: 0
   startPosition: {fileID: 4487346666263940668}
   playerList:
   - {fileID: 30203511}
@@ -952,6 +953,8 @@ MonoBehaviour:
   playerDefaultStartingPoint: 0000000000000000
   playerPosition: 0
   currentFloor: 0
+  actionCost: 0
+  statusCost: 0
   startPoint: 1
 --- !u!4 &712193935 stripped
 Transform:
@@ -1041,6 +1044,8 @@ MonoBehaviour:
   playerDefaultStartingPoint: 0000000000000000
   playerPosition: 0
   currentFloor: 0
+  actionCost: 0
+  statusCost: 0
   startPoint: 1
 --- !u!4 &771796964 stripped
 Transform:
@@ -1056,8 +1061,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 787522018}
-  m_Layer: 0
-  m_Name: playerStart
+  m_Layer: 7
+  m_Name: PlayerStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1391,16 +1396,23 @@ MonoBehaviour:
   fieldCameraLook: {fileID: 627365948}
   normalStartingPoint: {fileID: 4487346666263940668}
   bossStartingPoint: {fileID: 8058286809019384223}
-  privateNormalField:
-  - {fileID: 9092992557580399248}
-  - {fileID: 3852504687273911723}
-  - {fileID: 113050477884857346}
-  - {fileID: 4483045127982681080}
-  privateBossField: []
+  privateDefaultNormalField:
+  - {fileID: 386836392235731429}
+  - {fileID: 7689318605292377597}
+  - {fileID: 5997784706216005945}
+  - {fileID: 6675243179895328995}
+  privateDefaultBossField:
+  - {fileID: 7209348124539755268}
+  - {fileID: 1669981816685817611}
+  - {fileID: 6107320022138145211}
+  - {fileID: 5645579674524841482}
   defaultNormalStart: []
   defaultBossStart: []
+  defaultPrivateNormalPoint: []
+  defaultPrivateBossPoint: []
   normalFieldCount: 0
   bossFieldCount: 0
+  privateFieldCount: 0
   specialField: []
 --- !u!4 &1207222275
 Transform:
@@ -1541,6 +1553,8 @@ MonoBehaviour:
   playerDefaultStartingPoint: 0000000000000000
   playerPosition: 0
   currentFloor: 0
+  actionCost: 0
+  statusCost: 0
   startPoint: 1
 --- !u!4 &1242315332 stripped
 Transform:
@@ -2088,7 +2102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2133947034}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2375,7 +2389,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7689318605292377597}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2555,7 +2569,7 @@ GameObject:
   - component: {fileID: 7719464370680181815}
   - component: {fileID: 4517621756874514833}
   - component: {fileID: 4366803245484830685}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2795,7 +2809,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6107320022138145211}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2932,7 +2946,7 @@ GameObject:
   - component: {fileID: 7839528097192570378}
   - component: {fileID: 1479038542710086343}
   - component: {fileID: 9005568412449593077}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shop_Player_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2967,7 +2981,7 @@ GameObject:
   - component: {fileID: 4773205183852566479}
   - component: {fileID: 5563143735464507242}
   - component: {fileID: 2984196863959209710}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Floor2_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2993,8 +3007,8 @@ GameObject:
   - component: {fileID: 3014828374824377955}
   - component: {fileID: 6217237521684508732}
   - component: {fileID: 6698480948104929866}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_Water_01
+  m_Layer: 7
+  m_Name: Shop_Player_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3292,7 +3306,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4487346666263940668}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3403,7 +3417,7 @@ GameObject:
   - component: {fileID: 5885839443845953035}
   - component: {fileID: 5413089099273358138}
   - component: {fileID: 2899639711059431049}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3522,7 +3536,7 @@ GameObject:
   - component: {fileID: 2103745354029992104}
   - component: {fileID: 850613476558611679}
   - component: {fileID: 2146406003828760613}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3572,7 +3586,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1669981816685817611}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3598,7 +3612,7 @@ GameObject:
   - component: {fileID: 2251307997612277926}
   - component: {fileID: 6252264273117635801}
   - component: {fileID: 4886129661612293498}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4039,8 +4053,8 @@ GameObject:
   - component: {fileID: 3829453725424048208}
   - component: {fileID: 3668830435490057331}
   - component: {fileID: 9060520242058899591}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_FloatingIsland_01
+  m_Layer: 7
+  m_Name: Monster_field_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4701,7 +4715,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 386836392235731429}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5111,7 +5125,7 @@ GameObject:
   - component: {fileID: 187040068492182639}
   - component: {fileID: 3731750685061798355}
   - component: {fileID: 1970410574805009629}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5191,7 +5205,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8058286809019384223}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5371,8 +5385,8 @@ GameObject:
   - component: {fileID: 8429305923571946384}
   - component: {fileID: 3022855653085421365}
   - component: {fileID: 7886606592158051035}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_02
+  m_Layer: 7
+  m_Name: PlayerStartField_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5779,8 +5793,8 @@ GameObject:
   - component: {fileID: 3680215903185864963}
   - component: {fileID: 8354244564095314509}
   - component: {fileID: 1405579501688594401}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_FloatingIsland_01
+  m_Layer: 7
+  m_Name: Monster_field_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6103,7 +6117,7 @@ GameObject:
   - component: {fileID: 8168664679577838094}
   - component: {fileID: 3259070579924012163}
   - component: {fileID: 8069391637985644428}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6802,8 +6816,8 @@ GameObject:
   - component: {fileID: 6332851888148437350}
   - component: {fileID: 1357033359516708472}
   - component: {fileID: 6958212305651658811}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_FloatingIsland_01
+  m_Layer: 7
+  m_Name: Monster_field_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6963,7 +6977,7 @@ GameObject:
   - component: {fileID: 3286138852634059161}
   - component: {fileID: 5723263231951082067}
   - component: {fileID: 5701868947203887954}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7199,7 +7213,7 @@ GameObject:
   - component: {fileID: 3349479042582230914}
   - component: {fileID: 1392241907401142421}
   - component: {fileID: 3494250979380059509}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7262,7 +7276,7 @@ GameObject:
   - component: {fileID: 497884300430236877}
   - component: {fileID: 3495523976863844479}
   - component: {fileID: 2294049719429058700}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7504,7 +7518,7 @@ GameObject:
   - component: {fileID: 5014681234410910456}
   - component: {fileID: 8425648958109000635}
   - component: {fileID: 5266624745455205114}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7715,7 +7729,7 @@ GameObject:
   - component: {fileID: 5438278368831895811}
   - component: {fileID: 5117606640547340168}
   - component: {fileID: 3985123549316169173}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shop_Player_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7871,7 +7885,7 @@ GameObject:
   - component: {fileID: 9082380377490022913}
   - component: {fileID: 2299039692610732766}
   - component: {fileID: 7200825316966638576}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerStartField_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7890,7 +7904,7 @@ GameObject:
   - component: {fileID: 4988635040904312037}
   - component: {fileID: 2398377855003304822}
   - component: {fileID: 513168983840431421}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerStartField_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8022,7 +8036,7 @@ GameObject:
   - component: {fileID: 4080176281873522329}
   - component: {fileID: 7474049258596264770}
   - component: {fileID: 9131861820086926710}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Floor2_8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8221,8 +8235,8 @@ GameObject:
   - component: {fileID: 4221452582629438771}
   - component: {fileID: 9145715889195904903}
   - component: {fileID: 1286911598229020989}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_Water_01
+  m_Layer: 7
+  m_Name: Shop_Player_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8308,8 +8322,8 @@ GameObject:
   - component: {fileID: 8722324097419385626}
   - component: {fileID: 4471286315418828759}
   - component: {fileID: 5690431971314173995}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_02
+  m_Layer: 7
+  m_Name: PlayerStartField_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8766,7 +8780,7 @@ GameObject:
   - component: {fileID: 3356588800495515549}
   - component: {fileID: 7508438154275226243}
   - component: {fileID: 7882363624232326981}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Floor1_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9099,7 +9113,7 @@ GameObject:
   - component: {fileID: 1326122124807376155}
   - component: {fileID: 8115050467846394576}
   - component: {fileID: 3543994863705219577}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9478,7 +9492,7 @@ GameObject:
   - component: {fileID: 8472710181009538147}
   - component: {fileID: 6895873777123689149}
   - component: {fileID: 7444673077096321290}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9755,7 +9769,7 @@ GameObject:
   - component: {fileID: 6719473831866118766}
   - component: {fileID: 8319960122599188248}
   - component: {fileID: 8363895180840982763}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9781,7 +9795,7 @@ GameObject:
   - component: {fileID: 3560077864438285285}
   - component: {fileID: 3175084538170028757}
   - component: {fileID: 932520347264672991}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9867,7 +9881,7 @@ GameObject:
   - component: {fileID: 2417147779000788676}
   - component: {fileID: 3026015492508988811}
   - component: {fileID: 453159180120858123}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9925,7 +9939,7 @@ GameObject:
   - component: {fileID: 8710906891670765461}
   - component: {fileID: 5229771355660342890}
   - component: {fileID: 3164611683171400431}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10163,7 +10177,7 @@ GameObject:
   - component: {fileID: 8747650345515876253}
   - component: {fileID: 7053135844286330764}
   - component: {fileID: 2184101326886840137}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Monster_Field_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10181,7 +10195,7 @@ GameObject:
   - component: {fileID: 4897899006966043363}
   - component: {fileID: 5031015444872258687}
   - component: {fileID: 7591506545292994982}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10451,7 +10465,7 @@ GameObject:
   - component: {fileID: 5067719297182994013}
   - component: {fileID: 3407559861238508997}
   - component: {fileID: 44679083047332692}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10996,7 +11010,7 @@ GameObject:
   - component: {fileID: 7069266628459599004}
   - component: {fileID: 3344952965628046397}
   - component: {fileID: 8048154903502927039}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11014,7 +11028,7 @@ GameObject:
   - component: {fileID: 2034289258273986305}
   - component: {fileID: 5244149936600168753}
   - component: {fileID: 5613492043841075000}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11148,7 +11162,7 @@ GameObject:
   - component: {fileID: 3102774803796926314}
   - component: {fileID: 8783972112445569049}
   - component: {fileID: 4154001018086878052}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerStartField_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11266,8 +11280,8 @@ GameObject:
   - component: {fileID: 6750368881879819069}
   - component: {fileID: 3000812623431238092}
   - component: {fileID: 1888357599253343764}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_02
+  m_Layer: 7
+  m_Name: PlayerStartField_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11997,7 +12011,7 @@ GameObject:
   - component: {fileID: 5249699289767968878}
   - component: {fileID: 3809714753815571868}
   - component: {fileID: 8540079462605807063}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12118,7 +12132,7 @@ GameObject:
   - component: {fileID: 3089741151122028855}
   - component: {fileID: 336774509154725564}
   - component: {fileID: 4176522670420988650}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Monster_Field_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12460,7 +12474,7 @@ GameObject:
   - component: {fileID: 7661470319240403238}
   - component: {fileID: 6925857638951705985}
   - component: {fileID: 3711887650243611910}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerStartField_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12501,7 +12515,7 @@ GameObject:
   - component: {fileID: 2088198498315028679}
   - component: {fileID: 8825929692858255226}
   - component: {fileID: 6839664891827128590}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Monster_Field_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12562,7 +12576,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7209348124539755268}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13287,7 +13301,7 @@ GameObject:
   - component: {fileID: 1239536800852603465}
   - component: {fileID: 2276706324250087749}
   - component: {fileID: 4693512961354410595}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13493,8 +13507,8 @@ GameObject:
   - component: {fileID: 1191610490388291068}
   - component: {fileID: 29786655203095566}
   - component: {fileID: 7977973520285285101}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_02
+  m_Layer: 7
+  m_Name: PlayerStartField_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13529,7 +13543,7 @@ GameObject:
   - component: {fileID: 1817307991407418459}
   - component: {fileID: 7429526348773431891}
   - component: {fileID: 2343272622318035288}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13883,7 +13897,7 @@ GameObject:
   - component: {fileID: 500625281109351801}
   - component: {fileID: 8697440811813306813}
   - component: {fileID: 7407742441854080554}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14638,7 +14652,7 @@ GameObject:
   - component: {fileID: 7544102929958383958}
   - component: {fileID: 8414853745957261441}
   - component: {fileID: 4265209051971899942}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Floor2_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14839,7 +14853,7 @@ GameObject:
   - component: {fileID: 6148442771774732442}
   - component: {fileID: 8752907470444771306}
   - component: {fileID: 5219814929574755494}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Floor1_24
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15394,7 +15408,7 @@ GameObject:
   - component: {fileID: 9152979387801973826}
   - component: {fileID: 2133342349580208529}
   - component: {fileID: 2022717502196791074}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15410,7 +15424,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5645579674524841482}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15488,7 +15502,7 @@ GameObject:
   - component: {fileID: 6443713110154759597}
   - component: {fileID: 8098082354525988800}
   - component: {fileID: 7274881887569863425}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Floor1_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15668,7 +15682,7 @@ GameObject:
   - component: {fileID: 4703874185328220411}
   - component: {fileID: 7579893612249602715}
   - component: {fileID: 4895153538204974508}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Floor1_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15826,7 +15840,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5997784706216005945}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16878,7 +16892,7 @@ GameObject:
   - component: {fileID: 6961748036179280533}
   - component: {fileID: 4685628271169360230}
   - component: {fileID: 7733296461213144738}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17242,7 +17256,7 @@ GameObject:
   - component: {fileID: 3970657081872539347}
   - component: {fileID: 453548425085800752}
   - component: {fileID: 8186332163426750851}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shop_Player_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17487,8 +17501,8 @@ GameObject:
   - component: {fileID: 8130129225727011563}
   - component: {fileID: 2205183595167743796}
   - component: {fileID: 2972857043736254292}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_Water_01
+  m_Layer: 7
+  m_Name: Shop_Player_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17505,7 +17519,7 @@ GameObject:
   - component: {fileID: 568542886384568530}
   - component: {fileID: 1227225787932370121}
   - component: {fileID: 3095192665943175647}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17695,7 +17709,7 @@ GameObject:
   - component: {fileID: 6311695565877784077}
   - component: {fileID: 6248780735396860365}
   - component: {fileID: 7629442644885370817}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18079,7 +18093,7 @@ GameObject:
   - component: {fileID: 7870808504641110282}
   - component: {fileID: 142903513234539575}
   - component: {fileID: 6936763193657747795}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18569,7 +18583,7 @@ GameObject:
   - component: {fileID: 1162342472798683418}
   - component: {fileID: 2251943357247163194}
   - component: {fileID: 7165087302381796873}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shop_Player_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18602,7 +18616,7 @@ GameObject:
   - component: {fileID: 8805983934856169164}
   - component: {fileID: 136367801370656522}
   - component: {fileID: 799239630824482658}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18755,8 +18769,8 @@ GameObject:
   - component: {fileID: 6313465119475475149}
   - component: {fileID: 7366903987527603852}
   - component: {fileID: 3581288211420765961}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_FloatingIsland_01
+  m_Layer: 7
+  m_Name: Monster_field_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20075,8 +20089,8 @@ GameObject:
   - component: {fileID: 6661976151569227625}
   - component: {fileID: 1433935410303449801}
   - component: {fileID: 6495903037681005248}
-  m_Layer: 0
-  m_Name: SM_Tile_Hex_Flat_Water_01
+  m_Layer: 7
+  m_Name: Shop_Player_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20313,7 +20327,7 @@ GameObject:
   - component: {fileID: 5663291896375295244}
   - component: {fileID: 1838110466952341873}
   - component: {fileID: 141042938209797182}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Floor2_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20493,7 +20507,7 @@ GameObject:
   - component: {fileID: 8263730885977006432}
   - component: {fileID: 5358611220524929793}
   - component: {fileID: 4048311647637204325}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Floor2_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20612,7 +20626,7 @@ GameObject:
   - component: {fileID: 7325172527502532372}
   - component: {fileID: 361453202231286200}
   - component: {fileID: 3647895231410108677}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Floor1_22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21025,7 +21039,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6675243179895328995}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21239,7 +21253,7 @@ GameObject:
   - component: {fileID: 4789157751647281475}
   - component: {fileID: 4174055165261614745}
   - component: {fileID: 2257058846834936223}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Monster_Field_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}

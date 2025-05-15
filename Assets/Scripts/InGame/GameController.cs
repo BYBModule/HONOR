@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -23,25 +24,25 @@ public class GameController : MonoBehaviour
         
         Default,
     }
+
+    GameObject checkPoint;
     // 플레이어 UI
     public GameObject playerUI;
     // 주사위 프리팹
     public GameObject dicePrefab;
     // 상점 프리팹
     public GameObject shopPrefab;
+    // 체크포인트 프리팹    
+    public GameObject checkPointPrefab;
     // 턴 종료 버튼
     public Button turnEnd;
     // 현재 턴을 기록해주는 텍스트
     public TextMeshProUGUI turnText;
     //
     public TextMeshProUGUI currentTurnCount;
-    
     // 현재 턴인 플레이어
     private Player currentPlayer;
-    // 행동 코스트
-    [SerializeField] private int actionCost = 0;
-    // 스텟 코스트
-    [SerializeField] private int statusCost = 0;
+
     // 게임이 진행된 턴 카운트
     private int turnCount = 1;
     // 턴 제한 시간
@@ -106,9 +107,13 @@ public class GameController : MonoBehaviour
             // 1초마다 턴 제한 시간을 1씩 증가
             if(elapsedTime > turnLimit)
             {
+                // 경과시간이 1초 지날때 마다 리미트에 1초를 더해 30 - Limit로 제한시간 UI에 출력
                 turnLimit = (int)elapsedTime;
                 UpdateTurnText();
-                Action(CostAction.Move, 5);
+
+                // 액션의 기본값은 Move로 처리
+                
+                Action(CostAction.Move, currentPlayer.actionCost);
                 LookField(currentPlayer);
             }
             if(turnLimit >= 10 || isTurnEnd)
@@ -130,15 +135,15 @@ public class GameController : MonoBehaviour
         switch(currentPlayerAction)
         {
             case CostAction.Move:
-                if(currentPlayer.startPoint)
+                // if(currentPlayer.startPoint)
+                // {
+                //     cost = 0;
+                //     currentPlayer.FieldToFloor(currentPlayer.CheckFloor());
+                //     fieldUtility.PlayerStart(currentPlayer);
+                // }
+                if(cost > 0)
                 {
-                    cost = 0;
-                    currentPlayer.FieldToFloor(currentPlayer.CheckFloor());
-                    fieldUtility.PlayerStart(currentPlayer);
-                }
-                if(cost > 1)
-                {
-                    fieldUtility.PlayerMove(currentPlayer, 5);
+                    PlayerMove(currentPlayer, cost);
                 }
                 else
                 {
@@ -187,11 +192,11 @@ public class GameController : MonoBehaviour
             diceRoll = false;
             dice.DiceRolling();
             yield return new WaitForSeconds(6.0f);
-            currentPlayer = players[currentPlayerCount];
-            actionCost = dice.GetDiceNumber();
             yield return new WaitForSeconds(3.0f);
+            currentPlayer = players[currentPlayerCount];
+            currentPlayer.actionCost = dice.GetDiceNumber();
             ChangeUI(false);
-            cinemachine.Lens.FieldOfView = 80;
+            cinemachine.Lens.FieldOfView = 40;
             cinemachine.Target.TrackingTarget = currentPlayer.transform;
             startTurn = true;
         }
@@ -217,10 +222,12 @@ public class GameController : MonoBehaviour
     {
         ChangePlayer(currentPlayerCount);
         diceRoll = true;
+        currentPlayer.actionCost = 0;
         startTurn = false;
         isTurnEnd = false;
         elapsedTime = 0;
         turnLimit = 0;
+        preCost = 0;
         cinemachine.Lens.FieldOfView = 120;
         cinemachine.Target.TrackingTarget = dicePrefab.transform;
         ChangeUI(true);
@@ -249,6 +256,106 @@ public class GameController : MonoBehaviour
     private void NextPlayerCheck(List<Player> players)
     {
 
+    }
+    // 플레이어의 이동을 처리하는 메서드
+    public void PlayerMove(Player player, int cost)
+    {
+        int moveDistance;
+        Debug.Log(player.playerPosition);
+        if(checkPoint == null)
+        {
+            checkPoint = Instantiate(checkPointPrefab, player.transform.position, Quaternion.identity, player.transform.parent);
+        }
+
+        if(preCost == 0)
+        {    
+            this.preCost = cost;
+        }
+        moveDistance = player.playerPosition;
+        if(Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if(preCost > 0)
+            {
+                preCost -= 1;
+                moveDistance += 1;
+            }
+        }
+        else if(Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if(preCost < cost)
+            {
+                preCost += 1;
+                moveDistance -= 1;
+            }
+        }
+        if(player.CheckFloor() == Player.Floor.Normal || player.CheckFloor() == Player.Floor.Boss)
+        {
+            if(moveDistance < 1)
+            {
+                player.playerPosition = moveDistance + fieldUtility.CurrentFloor(player).Count;
+            }
+            else if(moveDistance > fieldUtility.CurrentFloor(player).Count)
+            {
+                player.playerPosition = moveDistance - fieldUtility.CurrentFloor(player).Count;
+            }
+            // 체크포인트를 플레이어가 이동할 위치로 이동합니다
+            checkPoint.transform.parent = fieldUtility.GetPlayerTransform(player);
+            checkPoint.transform.position = fieldUtility.GetPlayerTransform(player).position;
+        }
+        else
+        {
+            if(player.CheckFloor() == Player.Floor.PrivateNormal)
+            {
+                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[0])
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[0] + 2;
+                }
+                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[0] + 2)
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[0];
+                }
+                else
+                {
+                    player.playerPosition += moveDistance;
+                }                
+            }
+            else if(player.CheckFloor() == Player.Floor.PrivateBoss)
+            {
+                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[1])
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[1] + 2;
+                    moveDistance = 0;
+                }
+                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[1] + 2)
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[1];
+                    moveDistance = 0;
+                }
+                else
+                {
+                    player.playerPosition += moveDistance;
+                }
+
+            }
+            
+            checkPoint.transform.parent = fieldUtility.GetPlayerTransform(player);
+            checkPoint.transform.position = fieldUtility.GetPlayerTransform(player).position;
+        }
+
+        // 플레이어 이동처리
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            player.transform.parent = fieldUtility.GetPlayerTransform(player);            
+            player.transform.position = fieldUtility.GetPlayerTransform(player).position;
+            cost -= preCost;
+            if(player.startPoint)
+            {
+                player.FloorToField(player.CheckFloor());
+                fieldUtility.PlayerStart(player);
+                player.startPoint = false;
+            }
+            return;
+        }   
     }
 
     // 플레이어 발판 이동 처리
@@ -320,8 +427,8 @@ public class GameController : MonoBehaviour
         {
             if(Input.GetKeyDown(KeyCode.Tab))
             {
-                cinemachine.Lens.FieldOfView = 80;
-                cinemachine.Target.TrackingTarget = player.transform;
+                cinemachine.Lens.FieldOfView = 40;
+                cinemachine.Target.TrackingTarget = checkPoint.transform;
                 isFieldCamera = true;
             }
         }

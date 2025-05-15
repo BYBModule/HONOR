@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     {
         Normal,
         Boss,
+        PrivateNormal,
+        PrivateBoss,
     }
     
     // 서버에서 받을 플레이어 ID
@@ -42,9 +44,12 @@ public class Player : MonoBehaviour
     // 플레이어 진입 필드 기본값 (0 : 일반필드, 1 : 보스필드)
     public int[] playerDefaultStartingPoint = new int [2];
     // 플레이어 현재 위치
-    public int playerPosition;
+    public int playerPosition = 0;
     public Floor currentFloor;
-
+    // 행동 코스트
+    public int actionCost = 0;
+    // 스텟 코스트
+    public int statusCost = 0;
     public bool startPoint = true;
     // 플레이어 인스턴스
     public static Player Instance
@@ -103,7 +108,10 @@ public class Player : MonoBehaviour
         //}
         
     }
-
+    public void ChangeFloor(Floor floor)
+    {
+        this.currentFloor = floor;
+    }
     // 수치를 업데이트 하기 위한 변수
     public void PlayerUpdate()
     {
@@ -128,17 +136,33 @@ public class Player : MonoBehaviour
             playerData.playerHp += hp;
         }
     }
-    // 일반, 보스필드 전환될 때 기본위치
-    public void FieldToFloor(Floor floor)
+
+    // 플로어에서 필드로 전환될 때 기본위치치
+    public void FloorToField(Floor floor)
     {
         if(floor == Floor.Normal)
         {
-            playerPosition = playerDefaultStartingPoint[0];
+            playerPosition = playerDefaultStartingPoint[1];
+            this.currentFloor = Floor.PrivateBoss;
         }
         else if(floor == Floor.Boss)
         {
-            playerPosition = playerDefaultStartingPoint[1];
+            playerPosition = playerDefaultStartingPoint[0];
+            this.currentFloor = Floor.PrivateNormal;
         }
+    }
+    // 일반, 보스필드 전환될 때 기본위치
+    public void FieldToFloor(Floor floor)
+    {
+        if(floor == Floor.PrivateNormal)
+        {
+            this.currentFloor = Floor.Normal;
+        }
+        else if(floor == Floor.PrivateBoss)
+        {
+            this.currentFloor = Floor.Boss;
+        }
+        startPoint = true;       
     }
     // 플레이어가 있는 위치를 체크하는 메서드
     public Floor CheckFloor()
@@ -146,7 +170,9 @@ public class Player : MonoBehaviour
         if(currentFloor == Floor.Normal)
             return Floor.Normal;
         else if(currentFloor == Floor.Boss)
-            return Floor.Boss;        
-        return default;
+            return Floor.Boss;
+        else if(currentFloor == Floor.PrivateNormal)
+            return Floor.PrivateNormal;        
+        return Floor.PrivateBoss;
     }
 }

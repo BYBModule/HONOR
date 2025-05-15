@@ -12,10 +12,10 @@ TagManager:
   - 
   - Water
   - UI
-  - Floor
-  - Elite
-  - Boss
-  - 
+  - PrivateNormalFloor
+  - PrivateBossFloor
+  - NormalFloor
+  - BossFloor
   - 
   - 
   - 

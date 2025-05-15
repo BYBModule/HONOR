@@ -4,7 +4,7 @@ using UnityEngine;
 public class Dice : MonoBehaviour
 {
     // 회전하는 주사위
-    public DiceRoll dice;
+    [HideInInspector] public DiceRoll dice;
     void Awake()
     {
         // DiceRoll이 포함된 오브젝트를 연결

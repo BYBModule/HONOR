@@ -50,7 +50,6 @@ public class DiceRoll : MonoBehaviour
         rigidbody.AddForce(Vector3.up * startRollingForce);
         // xyz값으로 회전시키는 힘을 가함
         rigidbody.AddTorque(forceX, forceY, forceZ);
-
     }
 
     // 초기화
