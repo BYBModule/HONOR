@@ -25,7 +25,6 @@ public class GameController : MonoBehaviour
         Default,
     }
 
-    GameObject checkPoint;
     // 플레이어 UI
     public GameObject playerUI;
     // 주사위 프리팹
@@ -110,9 +109,7 @@ public class GameController : MonoBehaviour
                 // 경과시간이 1초 지날때 마다 리미트에 1초를 더해 30 - Limit로 제한시간 UI에 출력
                 turnLimit = (int)elapsedTime;
                 UpdateTurnText();
-
                 // 액션의 기본값은 Move로 처리
-                
                 Action(CostAction.Move, currentPlayer.actionCost);
                 LookField(currentPlayer);
             }
@@ -143,7 +140,7 @@ public class GameController : MonoBehaviour
                 // }
                 if(cost > 0)
                 {
-                    PlayerMove(currentPlayer, cost);
+                    fieldUtility.PlayerMove(currentPlayer, cost, preCost);
                 }
                 else
                 {
@@ -249,7 +246,13 @@ public class GameController : MonoBehaviour
     // 스텟 코스트로 능력치를 조절
     private void StatusAdjustment(Player player, int Cost)
     {
-        
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            // 캐릭터 UI 출력
+            // 버튼을 클릭하여 스테이터스 조정
+            
+
+        }
     }
 
     // 턴 전환 플레이어 체크
@@ -257,106 +260,7 @@ public class GameController : MonoBehaviour
     {
 
     }
-    // 플레이어의 이동을 처리하는 메서드
-    public void PlayerMove(Player player, int cost)
-    {
-        int moveDistance;
-        Debug.Log(player.playerPosition);
-        if(checkPoint == null)
-        {
-            checkPoint = Instantiate(checkPointPrefab, player.transform.position, Quaternion.identity, player.transform.parent);
-        }
 
-        if(preCost == 0)
-        {    
-            this.preCost = cost;
-        }
-        moveDistance = player.playerPosition;
-        if(Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if(preCost > 0)
-            {
-                preCost -= 1;
-                moveDistance += 1;
-            }
-        }
-        else if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if(preCost < cost)
-            {
-                preCost += 1;
-                moveDistance -= 1;
-            }
-        }
-        if(player.CheckFloor() == Player.Floor.Normal || player.CheckFloor() == Player.Floor.Boss)
-        {
-            if(moveDistance < 1)
-            {
-                player.playerPosition = moveDistance + fieldUtility.CurrentFloor(player).Count;
-            }
-            else if(moveDistance > fieldUtility.CurrentFloor(player).Count)
-            {
-                player.playerPosition = moveDistance - fieldUtility.CurrentFloor(player).Count;
-            }
-            // 체크포인트를 플레이어가 이동할 위치로 이동합니다
-            checkPoint.transform.parent = fieldUtility.GetPlayerTransform(player);
-            checkPoint.transform.position = fieldUtility.GetPlayerTransform(player).position;
-        }
-        else
-        {
-            if(player.CheckFloor() == Player.Floor.PrivateNormal)
-            {
-                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[0])
-                {
-                    player.playerPosition = player.playerDefaultStartingPoint[0] + 2;
-                }
-                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[0] + 2)
-                {
-                    player.playerPosition = player.playerDefaultStartingPoint[0];
-                }
-                else
-                {
-                    player.playerPosition += moveDistance;
-                }                
-            }
-            else if(player.CheckFloor() == Player.Floor.PrivateBoss)
-            {
-                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[1])
-                {
-                    player.playerPosition = player.playerDefaultStartingPoint[1] + 2;
-                    moveDistance = 0;
-                }
-                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[1] + 2)
-                {
-                    player.playerPosition = player.playerDefaultStartingPoint[1];
-                    moveDistance = 0;
-                }
-                else
-                {
-                    player.playerPosition += moveDistance;
-                }
-
-            }
-            
-            checkPoint.transform.parent = fieldUtility.GetPlayerTransform(player);
-            checkPoint.transform.position = fieldUtility.GetPlayerTransform(player).position;
-        }
-
-        // 플레이어 이동처리
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            player.transform.parent = fieldUtility.GetPlayerTransform(player);            
-            player.transform.position = fieldUtility.GetPlayerTransform(player).position;
-            cost -= preCost;
-            if(player.startPoint)
-            {
-                player.FloorToField(player.CheckFloor());
-                fieldUtility.PlayerStart(player);
-                player.startPoint = false;
-            }
-            return;
-        }   
-    }
 
     // 플레이어 발판 이동 처리
     // private void PlayerMove(Transform parant, int cost)
@@ -428,7 +332,7 @@ public class GameController : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Tab))
             {
                 cinemachine.Lens.FieldOfView = 40;
-                cinemachine.Target.TrackingTarget = checkPoint.transform;
+                cinemachine.Target.TrackingTarget = fieldUtility.checkPoint.transform;
                 isFieldCamera = true;
             }
         }

@@ -8,27 +8,29 @@ using UnityEngine;
 
 public class FieldUtility : MonoBehaviour
 {
+    
+    [HideInInspector] public GameObject checkPoint;
     // 이동할 체크포인트
     public GameObject checkPointPrefab;
     //
-    public GameObject fieldCameraLook;  
+    public GameObject fieldCameraLook;
     // 일반 필드 기준
-    public Transform normalStartingPoint;   
+    public Transform normalStartingPoint;
     // 보스 필드 기준
     public Transform bossStartingPoint;
-    
+
     // 플레이어 개인필드 (일반)
     public List<Transform> privateDefaultNormalField;
     // 플레이어 개인필드 (보스)
     public List<Transform> privateDefaultBossField;
-    
+
     // 일반 필드 시작 지점
     public List<Transform> defaultNormalStart;
     // 보스 필드 시작 지점
     public List<Transform> defaultBossStart;
     public List<Transform> defaultPrivateNormalPoint;
     public List<Transform> defaultPrivateBossPoint;
-    
+
     // 일반 필드 (1층)
     [HideInInspector] public Dictionary<int, Transform> normalField = new Dictionary<int, Transform>();
     // 보스 필드 (2층)
@@ -46,13 +48,13 @@ public class FieldUtility : MonoBehaviour
         InitializedField(normalStartingPoint, normalFieldCount, normalField);
         InitializedField(bossStartingPoint, bossFieldCount, bossField);
         var normal = privateDefaultNormalField;
-        foreach(Transform input in normal)
+        foreach (Transform input in normal)
         {
             InitializedField(input, privateFieldCount, privateField);
             privateFieldCount += 3;
         }
         var boss = privateDefaultBossField;
-        foreach(Transform input in boss)
+        foreach (Transform input in boss)
         {
             InitializedField(input, privateFieldCount, privateField);
             privateFieldCount += 3;
@@ -61,7 +63,7 @@ public class FieldUtility : MonoBehaviour
     void InitializedField(Transform field, int count, Dictionary<int, Transform> getField)
     {
         var input = field.GetComponentInChildren<Transform>();
-        foreach(Transform inputField in input)
+        foreach (Transform inputField in input)
         {
             getField.Add(count, inputField);
             count++;
@@ -75,14 +77,14 @@ public class FieldUtility : MonoBehaviour
         // 
         int privateNormalField = 0;
         // 개인필드에 일반, 보스필드를 통합해서 초기화 했기때문에 보스개인필드는 중앙값부터 시작 
-        int privateBossField = privateField.Count % 2 == 0 ? privateField.Count/2 : privateField.Count/2 + 1; 
+        int privateBossField = privateField.Count % 2 == 0 ? privateField.Count / 2 : privateField.Count / 2 + 1;
 
         List<Transform> defaultPosition = new List<Transform>();
-        foreach(Transform playerSpawnPoint in privateDefaultNormalField)
+        foreach (Transform playerSpawnPoint in privateDefaultNormalField)
         {
             defaultPosition.Add(playerSpawnPoint);
         }
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             players[i].transform.parent = privateField[privateNormalField];
             players[i].transform.position = privateField[privateNormalField].position;
@@ -103,11 +105,11 @@ public class FieldUtility : MonoBehaviour
     // 현재 플레이어가 있는 필드를 확인, 해당 필드를 리턴
     public Dictionary<int, Transform> CurrentFloor(Player player)
     {
-        if(player.CheckFloor() == Player.Floor.Normal)
+        if (player.CheckFloor() == Player.Floor.Normal)
         {
             return normalField;
         }
-        else if(player.CheckFloor() == Player.Floor.Boss)
+        else if (player.CheckFloor() == Player.Floor.Boss)
         {
             return bossField;
         }
@@ -120,37 +122,137 @@ public class FieldUtility : MonoBehaviour
     }
     public void PlayerStart(Player player)
     {
-        if(player.CheckFloor() == Player.Floor.Normal)
+        if (player.CheckFloor() == Player.Floor.Normal)
         {
             player.transform.parent = normalField[player.playerPosition];
             player.transform.position = normalField[player.playerPosition].position;
         }
-        else if(player.CheckFloor() == Player.Floor.Boss)
+        else if (player.CheckFloor() == Player.Floor.Boss)
         {
             player.transform.parent = bossField[player.playerPosition];
             player.transform.position = bossField[player.playerPosition].position;
         }
-        else if(player.CheckFloor() == Player.Floor.PrivateNormal || player.CheckFloor() == Player.Floor.PrivateBoss)
+        else if (player.CheckFloor() == Player.Floor.PrivateNormal || player.CheckFloor() == Player.Floor.PrivateBoss)
         {
             player.transform.parent = privateField[player.playerPosition];
             player.transform.position = privateField[player.playerPosition].position;
         }
     }
-    
+
     public Transform FieldCameraLookAt(Player player)
     {
         Transform result;
-        if(player.CheckFloor() == Player.Floor.Normal || player.CheckFloor() == Player.Floor.PrivateNormal)
+        if (player.CheckFloor() == Player.Floor.Normal || player.CheckFloor() == Player.Floor.PrivateNormal)
         {
             result = fieldCameraLook.GetComponent<Transform>().GetChild(0);
             return result;
         }
-        else if(player.CheckFloor() == Player.Floor.Boss || player.CheckFloor() == Player.Floor.PrivateBoss)
+        else if (player.CheckFloor() == Player.Floor.Boss || player.CheckFloor() == Player.Floor.PrivateBoss)
         {
             result = fieldCameraLook.GetComponent<Transform>().GetChild(1);
             return result;
         }
         return null;
     }
+    // 플레이어의 이동을 처리하는 메서드
+    public void PlayerMove(Player player, int cost, int preCost)
+    {
+        int moveDistance;
+        Debug.Log(player.playerPosition);
+        if(checkPoint == null)
+        {
+            checkPoint = Instantiate(checkPointPrefab, player.transform.position, Quaternion.identity, player.transform.parent);
+        }
+
+        if(preCost == 0)
+        {    
+            preCost = cost;
+        }
+        moveDistance = player.playerPosition;
+        if(Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if(preCost > 0)
+            {
+                preCost -= 1;
+                moveDistance += 1;
+            }
+        }
+        else if(Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if(preCost < cost)
+            {
+                preCost += 1;
+                moveDistance -= 1;
+            }
+        }
+        if(player.CheckFloor() == Player.Floor.Normal || player.CheckFloor() == Player.Floor.Boss)
+        {
+            if(moveDistance < 1)
+            {
+                player.playerPosition = moveDistance + CurrentFloor(player).Count;
+            }
+            else if(moveDistance > CurrentFloor(player).Count)
+            {
+                player.playerPosition = moveDistance - CurrentFloor(player).Count;
+            }
+            // 체크포인트를 플레이어가 이동할 위치로 이동합니다
+            checkPoint.transform.parent = GetPlayerTransform(player);
+            checkPoint.transform.position = GetPlayerTransform(player).position;
+        }
+        else
+        {
+            if(player.CheckFloor() == Player.Floor.PrivateNormal)
+            {
+                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[0])
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[0] + 2;
+                }
+                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[0] + 2)
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[0];
+                }
+                else
+                {
+                    player.playerPosition += moveDistance;
+                }                
+            }
+            else if(player.CheckFloor() == Player.Floor.PrivateBoss)
+            {
+                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[1])
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[1] + 2;
+                    moveDistance = 0;
+                }
+                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[1] + 2)
+                {
+                    player.playerPosition = player.playerDefaultStartingPoint[1];
+                    moveDistance = 0;
+                }
+                else
+                {
+                    player.playerPosition += moveDistance;
+                }
+
+            }
+            
+            checkPoint.transform.parent = GetPlayerTransform(player);
+            checkPoint.transform.position = GetPlayerTransform(player).position;
+        }
+
+        // 플레이어 이동처리
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            player.transform.parent = GetPlayerTransform(player);            
+            player.transform.position = GetPlayerTransform(player).position;
+            cost -= preCost;
+            if(player.startPoint)
+            {
+                player.FloorToField(player.CheckFloor());
+                PlayerStart(player);
+                player.startPoint = false;
+            }
+            return;
+        }   
+    }    
 
 }
