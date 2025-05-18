@@ -24,6 +24,7 @@ public class Thief : IClass
     // 신속(이동거리 증가)
     public void ClassAbility()
     {
+        
     }    
     public void Set_Status(Player player, Status status)
     {

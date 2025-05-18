@@ -1,17 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
 // 현재 턴인 플레이어 체크(PlayerCheck) > 주사위굴리기 > 주사위를 굴린 이후 30초 카운트시작(제한시간) >
-// 행동 코스트 사용 (플레이어 이동(PlayerMove()), 직업 특수 능력 사용) > 턴 넘김 or 30초지남 > 이동위치에 플레이어 확인 > 
+// 행동 코스트 사용 (플레이어 이동(PlayerMove()), 직업 특수 능력 사용) > 이동위치에 플레이어 및 몬스터 확인 > 전투 돌입 시 카운트 정지 > (전투를 했을시) 플레이어 정보를 저장
+// 턴 넘김 or 30초지남 > 변환된 플레이어 정보를 각 플레이어에게 전달한 후 플레이어 전환
 // 게임승리, 사망 확인 > 다음 턴 플레이어 확인 > 플레이어 전환 > 처음으로부터 반복
 public class GameController : MonoBehaviour
 {
-    public CinemachineCamera cinemachine;
+
+    // 주사위 클래스
+    Dice dice;
+    // 필드와 관련된 처리를 하기위한 클래스 
+    FieldUtility fieldUtility;
+    // 몬스터 전투를 위한 클래스
+    MonsterBattle monsterBattle;
+
     // 행동 코스트를 사용해서 할 수 있는 행동
     enum CostAction
     {
@@ -21,10 +28,14 @@ public class GameController : MonoBehaviour
         Shopping,
         // 직업 특수 능력사용
         ActiveClassAbility,
-        
+
         Default,
     }
 
+    // 카메라
+    public CinemachineCamera cinemachine;
+    // 보스 오브젝트
+    public GameObject boss;
     // 플레이어 UI
     public GameObject playerUI;
     // 주사위 프리팹
@@ -68,24 +79,22 @@ public class GameController : MonoBehaviour
 
     // 테스트용    
     public GameObject dummyPlayer;
-    
+
     public List<Transform> playerStartField;
 
-    Dice dice;
-    public FieldUtility fieldUtility;
 
     // 플레이어 목록 리스트
     private Dictionary<int, Player> players = new Dictionary<int, Player>();
-    
+
     // 현재 Floor번호
     public int currentFloorCount = 0;
     public int currentPlayerCount = 0;
-    
+
     public int preCost = 0;
     void Awake()
     {
         turnEnd.onClick.AddListener(ClickEndButton);
-        for(int i = 0; i < playerList.Count; i++)
+        for (int i = 0; i < playerList.Count; i++)
         {
             players.Add(i, playerList[i]);
         }
@@ -96,15 +105,19 @@ public class GameController : MonoBehaviour
         fieldUtility.SetDefaultStartingPoint(playerList);
     }
     void Update()
-    {   
-        if(diceRoll)
+    {
+        if (turnCount % 3 == 0)
+        {
+
+        }
+        if (diceRoll)
             StartTurn();
-        if(startTurn)
+        if (startTurn)
         {
             // 경과시간을 기록
             elapsedTime += Time.deltaTime;
             // 1초마다 턴 제한 시간을 1씩 증가
-            if(elapsedTime > turnLimit)
+            if (elapsedTime > turnLimit)
             {
                 // 경과시간이 1초 지날때 마다 리미트에 1초를 더해 30 - Limit로 제한시간 UI에 출력
                 turnLimit = (int)elapsedTime;
@@ -113,7 +126,7 @@ public class GameController : MonoBehaviour
                 Action(CostAction.Move, currentPlayer.actionCost);
                 LookField(currentPlayer);
             }
-            if(turnLimit >= 10 || isTurnEnd)
+            if (turnLimit >= 10 || isTurnEnd)
             {
                 PlayerTurnEnd();
             }
@@ -129,16 +142,10 @@ public class GameController : MonoBehaviour
     private void Action(CostAction currentPlayerAction, int cost)
     {
         // 시작 필드 체크
-        switch(currentPlayerAction)
+        switch (currentPlayerAction)
         {
             case CostAction.Move:
-                // if(currentPlayer.startPoint)
-                // {
-                //     cost = 0;
-                //     currentPlayer.FieldToFloor(currentPlayer.CheckFloor());
-                //     fieldUtility.PlayerStart(currentPlayer);
-                // }
-                if(cost > 0)
+                if (cost > 0)
                 {
                     fieldUtility.PlayerMove(currentPlayer, cost, preCost);
                 }
@@ -149,7 +156,7 @@ public class GameController : MonoBehaviour
                 }
                 break;
             case CostAction.Shopping:
-                if(cost > 2)
+                if (cost > 2)
                 {
                     cost -= 2;
                     Shopping();
@@ -161,7 +168,7 @@ public class GameController : MonoBehaviour
                 }
                 break;
             case CostAction.ActiveClassAbility:
-                if(cost > 2)
+                if (cost > 2)
                 {
                     cost -= 2;
                     ActiveClassAbility();
@@ -172,10 +179,9 @@ public class GameController : MonoBehaviour
                     return;
                 }
                 break;
-            case CostAction.Default :
+            case CostAction.Default:
                 break;
         }
-
     }
     void ClickEndButton()
     {
@@ -183,16 +189,18 @@ public class GameController : MonoBehaviour
     }
     IEnumerator TurnStart()
     {
-        if(!startTurn)
+
+        if (!startTurn)
         {
-            Debug.Log("StartTurn");
+            // 주사위를 굴리고 눈금값을 플레이어 행동코스트에 저장
             diceRoll = false;
             dice.DiceRolling();
-            yield return new WaitForSeconds(6.0f);
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(10.0f);
             currentPlayer = players[currentPlayerCount];
             currentPlayer.actionCost = dice.GetDiceNumber();
+            // 다이스 UI > 플레이어 UI 전환
             ChangeUI(false);
+            // 플레이어에게 카메라 위치 전환
             cinemachine.Lens.FieldOfView = 40;
             cinemachine.Target.TrackingTarget = currentPlayer.transform;
             startTurn = true;
@@ -215,32 +223,47 @@ public class GameController : MonoBehaviour
         currentPlayer.player_Class.ClassAbility();
     }
 
+    // 턴 종료 시 실행되는 메서드
     public void PlayerTurnEnd()
     {
-        ChangePlayer(currentPlayerCount);
+        // 주사위 굴리기위한 상태값을 true로 전환
         diceRoll = true;
+        // 현재 플레이어의 코스트를 0으로 전환
         currentPlayer.actionCost = 0;
+        // 턴 시작을 체크하기 위한 상태값을 false로 전환
         startTurn = false;
+        // 다음 플레이어의 턴종료 값을 false로 전환
         isTurnEnd = false;
+        // 경과 시간 초기화
         elapsedTime = 0;
+        // 턴 제한 시간 초기화 
         turnLimit = 0;
+        // 현재 코스트 초기화
         preCost = 0;
+        // 주사위를 바라보기위한 카메라값
         cinemachine.Lens.FieldOfView = 120;
         cinemachine.Target.TrackingTarget = dicePrefab.transform;
+        // 현재 턴인 플레이어를 다음 턴의 플레이어로 전환
+        ChangePlayer(currentPlayerCount);
+        // 플레이어 UI를 주사위 UI로 전환환
         ChangeUI(true);
     }
 
     // 턴 종료 처리
     private void ChangePlayer(int currentPlayerCount)
     {
-        if(currentPlayerCount < 3)
+        // 총 4명의 플레이어가 진행
+        // 플레이어의 최대 카운트 수는 0~3이므로 
+        // 3이 넘어가는 시점에서 다음 턴인 플레이어는 0번 플레이어
+        if (currentPlayerCount < 3)
         {
             this.currentPlayerCount++;
         }
         else
         {
-            turnCount++ ;
             this.currentPlayerCount = 0;
+            // 모든 플레이어가 행동을 끝냈기 때문에 턴 카운트를 1 증가 시킴
+            turnCount++;
         }
     }
     // 스텟 코스트로 능력치를 조절
@@ -250,76 +273,24 @@ public class GameController : MonoBehaviour
         {
             // 캐릭터 UI 출력
             // 버튼을 클릭하여 스테이터스 조정
-            
+
 
         }
     }
-
-    // 턴 전환 플레이어 체크
-    private void NextPlayerCheck(List<Player> players)
-    {
-
-    }
-
-
-    // 플레이어 발판 이동 처리
-    // private void PlayerMove(Transform parant, int cost)
-    // {
-        // int moveDistance;
-        // if(preCost == 0)
-            // preCost = cost;
-        // moveDistance = currentFloorCount;
-        // if(Input.GetKeyDown(KeyCode.RightArrow))
-        // {
-            // if(preCost > 0)
-            // {
-                // preCost -= 1;
-                // moveDistance += 1;
-            // }
-        // }
-        // else if(Input.GetKeyDown(KeyCode.LeftArrow))
-        // {
-            // if(preCost < cost)
-            // {
-                // preCost += 1;
-                // moveDistance -= 1;
-            // }
-        // }
-        // 
-        // if(moveDistance < 1)
-        // {
-            // currentFloorCount = moveDistance + playerTransform.Count;
-        // }
-        // else if(moveDistance > playerTransform.Count)
-        // {
-            // currentFloorCount = moveDistance - playerTransform.Count;
-        // }
-        // else
-        // {
-            // currentFloorCount = moveDistance;
-        // }
-        // checkPoint.transform.parent = playerTransform[currentFloorCount];
-        // checkPoint.transform.position = playerTransform[currentFloorCount].position;
-        // if(Input.GetKeyDown(KeyCode.Space))
-        // {
-            // dummyPlayer.transform.position = playerTransform[currentFloorCount].position;
-            // dummyPlayer.transform.parent = playerTransform[currentFloorCount];
-            // cost -= preCost;
-            // return;
-        // }    
-    // }
     // 승리
     private void Victory()
     {
+        // currentPlayer 승리
     }
+    // 화면 전환
     private void LookField(Player player)
     {
-        if(isFieldCamera)
+        if (isFieldCamera)
         {
-            if(Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
                 Transform cameraTarget = fieldUtility.FieldCameraLookAt(player);
-                if(cameraTarget != null)
+                if (cameraTarget != null)
                 {
                     cinemachine.Lens.FieldOfView = 60;
                     cinemachine.Target.TrackingTarget = cameraTarget;
@@ -329,7 +300,7 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            if(Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
                 cinemachine.Lens.FieldOfView = 40;
                 cinemachine.Target.TrackingTarget = fieldUtility.checkPoint.transform;
@@ -337,6 +308,7 @@ public class GameController : MonoBehaviour
             }
         }
     }
+    // 플레이어UI와 주사위UI 전환
     private void ChangeUI(bool toggle)
     {
         dicePrefab.SetActive(toggle);

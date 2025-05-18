@@ -60,6 +60,7 @@ public class FieldUtility : MonoBehaviour
             privateFieldCount += 3;
         }
     }
+    // 필드를 초기화 하기위한 메서드
     void InitializedField(Transform field, int count, Dictionary<int, Transform> getField)
     {
         var input = field.GetComponentInChildren<Transform>();
@@ -86,19 +87,25 @@ public class FieldUtility : MonoBehaviour
         }
         for (int i = 0; i < 4; i++)
         {
+            // 개인필드(일반) 할당
             players[i].transform.parent = privateField[privateNormalField];
             players[i].transform.position = privateField[privateNormalField].position;
+            // 플레이어 일반, 보스필드 할당
             defaultNormalStart.Add(normalField[normal]);
             defaultBossStart.Add(bossField[boss]);
+            // 플레이어 개인필드 시작지점 할당
             defaultPrivateNormalPoint.Add(privateField[privateNormalField]);
             defaultPrivateBossPoint.Add(privateField[privateBossField]);
+            // 플레이어의 일반, 보스필드 시작지점 할당
             players[i].playerDefaultStartingPoint[0] = privateNormalField;
             players[i].playerDefaultStartingPoint[1] = privateBossField;
+            // 게임이 시작될 때 플레이어의 시작지점을 할당
             players[i].playerPosition = privateNormalField;
             normal += 6;
             boss += 4;
             privateNormalField += 3;
             privateBossField += 3;
+            // 게임이 시작될 때 플레이어의 Floor 값을 할당
             players[i].ChangeFloor(Player.Floor.PrivateNormal);
         }
     }
@@ -120,18 +127,22 @@ public class FieldUtility : MonoBehaviour
     {
         return CurrentFloor(player)[player.playerPosition];
     }
+    // 플레이어의 시작지점을 정해주는 메서드
     public void PlayerStart(Player player)
     {
+        // 일반 필드
         if (player.CheckFloor() == Player.Floor.Normal)
         {
             player.transform.parent = normalField[player.playerPosition];
             player.transform.position = normalField[player.playerPosition].position;
         }
+        // 보스 필드
         else if (player.CheckFloor() == Player.Floor.Boss)
         {
             player.transform.parent = bossField[player.playerPosition];
             player.transform.position = bossField[player.playerPosition].position;
         }
+        // 개인 필드
         else if (player.CheckFloor() == Player.Floor.PrivateNormal || player.CheckFloor() == Player.Floor.PrivateBoss)
         {
             player.transform.parent = privateField[player.playerPosition];
@@ -139,6 +150,8 @@ public class FieldUtility : MonoBehaviour
         }
     }
 
+
+    // 현재 필드가 일반 필드인지 보스 필드인지 확인하고 해당 필드의 카메라 위치를 반환
     public Transform FieldCameraLookAt(Player player)
     {
         Transform result;
@@ -157,21 +170,24 @@ public class FieldUtility : MonoBehaviour
     // 플레이어의 이동을 처리하는 메서드
     public void PlayerMove(Player player, int cost, int preCost)
     {
+        // 이동커리
         int moveDistance;
-        Debug.Log(player.playerPosition);
-        if(checkPoint == null)
+        // 이동할 거리를 체크하기위한 체크포인트 생성
+        if (checkPoint == null)
         {
             checkPoint = Instantiate(checkPointPrefab, player.transform.position, Quaternion.identity, player.transform.parent);
         }
-
-        if(preCost == 0)
-        {    
+        // 남은 코스트에 코스트 값을 할당
+        if (preCost == 0)
+        {
             preCost = cost;
         }
+        // 이동 거리에 플레이어의 현재 위치를 저장
         moveDistance = player.playerPosition;
         if(Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if(preCost > 0)
+            // 남은 코스트가 0이 아닐때(이동)
+            if (preCost > 0)
             {
                 preCost -= 1;
                 moveDistance += 1;
@@ -179,7 +195,8 @@ public class FieldUtility : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if(preCost < cost)
+            // 남은 코스트가 코스트보다 작을때(되돌리기)
+            if (preCost < cost)
             {
                 preCost += 1;
                 moveDistance -= 1;
@@ -187,11 +204,13 @@ public class FieldUtility : MonoBehaviour
         }
         if(player.CheckFloor() == Player.Floor.Normal || player.CheckFloor() == Player.Floor.Boss)
         {
-            if(moveDistance < 1)
+            // 플레이어의 현재위치에서 이동한 거리가 1보다 작다면(필드에 할당된 Dictionary의 최소범위)
+            if (moveDistance < 1)
             {
                 player.playerPosition = moveDistance + CurrentFloor(player).Count;
             }
-            else if(moveDistance > CurrentFloor(player).Count)
+            // 플레이어의 현재위치에서 이동한 거리가 필드의 할당된 Dictionary의 최대범위 보다 크다면
+            else if (moveDistance > CurrentFloor(player).Count)
             {
                 player.playerPosition = moveDistance - CurrentFloor(player).Count;
             }
@@ -201,29 +220,30 @@ public class FieldUtility : MonoBehaviour
         }
         else
         {
-            if(player.CheckFloor() == Player.Floor.PrivateNormal)
+            // 개인 필드는 총 3칸
+            if (player.CheckFloor() == Player.Floor.PrivateNormal)
             {
-                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[0])
+                if (player.playerPosition + moveDistance < player.playerDefaultStartingPoint[0])
                 {
                     player.playerPosition = player.playerDefaultStartingPoint[0] + 2;
                 }
-                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[0] + 2)
+                else if (player.playerPosition + moveDistance > player.playerDefaultStartingPoint[0] + 2)
                 {
                     player.playerPosition = player.playerDefaultStartingPoint[0];
                 }
                 else
                 {
                     player.playerPosition += moveDistance;
-                }                
+                }
             }
-            else if(player.CheckFloor() == Player.Floor.PrivateBoss)
+            else if (player.CheckFloor() == Player.Floor.PrivateBoss)
             {
-                if(player.playerPosition + moveDistance < player.playerDefaultStartingPoint[1])
+                if (player.playerPosition + moveDistance < player.playerDefaultStartingPoint[1])
                 {
                     player.playerPosition = player.playerDefaultStartingPoint[1] + 2;
                     moveDistance = 0;
                 }
-                else if(player.playerPosition + moveDistance > player.playerDefaultStartingPoint[1] + 2)
+                else if (player.playerPosition + moveDistance > player.playerDefaultStartingPoint[1] + 2)
                 {
                     player.playerPosition = player.playerDefaultStartingPoint[1];
                     moveDistance = 0;
