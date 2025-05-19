@@ -10,6 +10,11 @@ public class SeceneChanger : MonoBehaviour
 
     public void NextScene()
     {
+        SceneManager.LoadScene("StoryScene");
+    }
+
+    public void TheNextScene()
+    {
         SceneManager.LoadScene("InGameScene");
     }
 }
