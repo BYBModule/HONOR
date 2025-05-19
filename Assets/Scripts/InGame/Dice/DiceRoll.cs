@@ -32,6 +32,7 @@ public class DiceRoll : MonoBehaviour
     }
     public void ChangeRigidBody()
     {
+        
         transform.localPosition = Vector3.up; 
         rigidbody.useGravity = !rigidbody.useGravity;
         rigidbody.isKinematic = !rigidbody.isKinematic;
@@ -59,7 +60,7 @@ public class DiceRoll : MonoBehaviour
         transform.rotation = new Quaternion(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), 0);
         // 주사위가 중력작용을 받아 땅과 충돌하게 설정
         rigidbody.useGravity = false;
-        // 주사위에 가해지는 힘을 받기위해 Kinematic값을 False로 전환
+        // 주사위에 가해지는 힘을 받기위해 Kinematic값을 False로 전환(ChangeRigidBody사용)
         rigidbody.isKinematic = true;
     }
 }

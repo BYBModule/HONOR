@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SeceneChanger : MonoBehaviour
+public class SceneChanger : MonoBehaviour
 {
     public void GoToScene()
     {

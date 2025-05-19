@@ -1,18 +1,12 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
-using Mono.Cecil.Cil;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class FieldUtility : MonoBehaviour
-{
-    
+{    
     [HideInInspector] public GameObject checkPoint;
     // 이동할 체크포인트
     public GameObject checkPointPrefab;
-    //
+    // 필드 카메라 전환 시점
     public GameObject fieldCameraLook;
     // 일반 필드 기준
     public Transform normalStartingPoint;
@@ -28,18 +22,24 @@ public class FieldUtility : MonoBehaviour
     public List<Transform> defaultNormalStart;
     // 보스 필드 시작 지점
     public List<Transform> defaultBossStart;
+    // 개인(일반) 필드 시작 지점
     public List<Transform> defaultPrivateNormalPoint;
+    // 개인(보스) 필드 시작 지점
     public List<Transform> defaultPrivateBossPoint;
 
     // 일반 필드 (1층)
     [HideInInspector] public Dictionary<int, Transform> normalField = new Dictionary<int, Transform>();
     // 보스 필드 (2층)
     [HideInInspector] public Dictionary<int, Transform> bossField = new Dictionary<int, Transform>();
-    // 개인필드
-    [HideInInspector] public Dictionary<int, Transform> privateField = new Dictionary<int, Transform>();
+    // 개인 필드 (일반 1층)
+    [HideInInspector] public Dictionary<int, Transform> privateNormalField = new Dictionary<int, Transform>();
+    // 개인 필드 (보스 2층)
+    [HideInInspector] public Dictionary<int, Transform> privateBossField = new Dictionary<int, Transform>();
+
     public int normalFieldCount = 0;
     public int bossFieldCount = 0;
-    public int privateFieldCount = 0;
+    public int privateNormalFieldCount = 0;
+    public int privateBossFieldCount = 0;
     // 특수필드
     public List<Transform> specialField;
 
@@ -47,18 +47,17 @@ public class FieldUtility : MonoBehaviour
     {
         InitializedField(normalStartingPoint, normalFieldCount, normalField);
         InitializedField(bossStartingPoint, bossFieldCount, bossField);
-        var normal = privateDefaultNormalField;
-        foreach (Transform input in normal)
+        for (int i = 0; i < privateDefaultNormalField.Count; i++)
         {
-            InitializedField(input, privateFieldCount, privateField);
-            privateFieldCount += 3;
+            InitializedField(privateDefaultNormalField[i], privateNormalFieldCount, privateNormalField);
+            privateNormalFieldCount = privateNormalField.Count;
         }
-        var boss = privateDefaultBossField;
-        foreach (Transform input in boss)
+        for (int i = 0; i < privateDefaultBossField.Count; i++)
         {
-            InitializedField(input, privateFieldCount, privateField);
-            privateFieldCount += 3;
+            InitializedField(privateDefaultBossField[i], privateBossFieldCount, privateBossField);
+            privateBossFieldCount = privateBossField.Count;
         }
+        
     }
     // 필드를 초기화 하기위한 메서드
     void InitializedField(Transform field, int count, Dictionary<int, Transform> getField)
@@ -75,36 +74,28 @@ public class FieldUtility : MonoBehaviour
     {
         int normal = 0;
         int boss = 0;
-        // 
-        int privateNormalField = 0;
-        // 개인필드에 일반, 보스필드를 통합해서 초기화 했기때문에 보스개인필드는 중앙값부터 시작 
-        int privateBossField = privateField.Count % 2 == 0 ? privateField.Count / 2 : privateField.Count / 2 + 1;
+        int privateNormal = 0;
+        int privateBoss = 0;
 
-        List<Transform> defaultPosition = new List<Transform>();
-        foreach (Transform playerSpawnPoint in privateDefaultNormalField)
-        {
-            defaultPosition.Add(playerSpawnPoint);
-        }
         for (int i = 0; i < 4; i++)
         {
             // 개인필드(일반) 할당
-            players[i].transform.parent = privateField[privateNormalField];
-            players[i].transform.position = privateField[privateNormalField].position;
+            players[i].transform.parent = privateNormalField[privateNormal];
+            players[i].transform.position = privateNormalField[privateNormal].position;
             // 플레이어 일반, 보스필드 할당
             defaultNormalStart.Add(normalField[normal]);
             defaultBossStart.Add(bossField[boss]);
             // 플레이어 개인필드 시작지점 할당
-            defaultPrivateNormalPoint.Add(privateField[privateNormalField]);
-            defaultPrivateBossPoint.Add(privateField[privateBossField]);
+            defaultPrivateNormalPoint.Add(privateNormalField[privateNormal]);
+            defaultPrivateBossPoint.Add(privateBossField[privateBoss]);
             // 플레이어의 일반, 보스필드 시작지점 할당
-            players[i].playerDefaultStartingPoint[0] = privateNormalField;
-            players[i].playerDefaultStartingPoint[1] = privateBossField;
+            players[i].playerDefaultStartingPoint = privateNormal;
             // 게임이 시작될 때 플레이어의 시작지점을 할당
-            players[i].playerPosition = privateNormalField;
+            players[i].playerPosition = privateNormal;
             normal += 6;
             boss += 4;
-            privateNormalField += 3;
-            privateBossField += 3;
+            privateNormal += 3;
+            privateBoss += 3;
             // 게임이 시작될 때 플레이어의 Floor 값을 할당
             players[i].ChangeFloor(Player.Floor.PrivateNormal);
         }
@@ -120,7 +111,11 @@ public class FieldUtility : MonoBehaviour
         {
             return bossField;
         }
-        return privateField;
+        else if (player.CheckFloor() == Player.Floor.PrivateNormal)
+        {
+            return privateNormalField;
+        }
+        return privateBossField;
     }
     // 플레이어의 위치를 되돌려주는 메서드
     public Transform GetPlayerTransform(Player player)
@@ -129,24 +124,25 @@ public class FieldUtility : MonoBehaviour
     }
     // 플레이어의 시작지점을 정해주는 메서드
     public void PlayerStart(Player player)
-    {
+    {    
         // 일반 필드
         if (player.CheckFloor() == Player.Floor.Normal)
         {
-            player.transform.parent = normalField[player.playerPosition];
-            player.transform.position = normalField[player.playerPosition].position;
+            player.PlayerTransform(normalField[player.playerPosition], normalField[player.playerPosition].position);
         }
         // 보스 필드
         else if (player.CheckFloor() == Player.Floor.Boss)
         {
-            player.transform.parent = bossField[player.playerPosition];
-            player.transform.position = bossField[player.playerPosition].position;
+            player.PlayerTransform(bossField[player.playerPosition], bossField[player.playerPosition].position);
         }
         // 개인 필드
-        else if (player.CheckFloor() == Player.Floor.PrivateNormal || player.CheckFloor() == Player.Floor.PrivateBoss)
+        else if (player.CheckFloor() == Player.Floor.PrivateNormal)
         {
-            player.transform.parent = privateField[player.playerPosition];
-            player.transform.position = privateField[player.playerPosition].position;
+            player.PlayerTransform(privateNormalField[player.playerPosition], privateNormalField[player.playerPosition].position);
+        }
+        else if (player.CheckFloor() == Player.Floor.PrivateBoss)
+        {
+            player.PlayerTransform(privateBossField[player.playerPosition], privateBossField[player.playerPosition].position);
         }
     }
 
@@ -170,17 +166,13 @@ public class FieldUtility : MonoBehaviour
     // 플레이어의 이동을 처리하는 메서드
     public void PlayerMove(Player player, int cost, int preCost)
     {
+        Debug.Log(preCost);
         // 이동커리
         int moveDistance;
         // 이동할 거리를 체크하기위한 체크포인트 생성
         if (checkPoint == null)
         {
             checkPoint = Instantiate(checkPointPrefab, player.transform.position, Quaternion.identity, player.transform.parent);
-        }
-        // 남은 코스트에 코스트 값을 할당
-        if (preCost == 0)
-        {
-            preCost = cost;
         }
         // 이동 거리에 플레이어의 현재 위치를 저장
         moveDistance = player.playerPosition;
@@ -207,13 +199,14 @@ public class FieldUtility : MonoBehaviour
             // 플레이어의 현재위치에서 이동한 거리가 1보다 작다면(필드에 할당된 Dictionary의 최소범위)
             if (moveDistance < 1)
             {
-                player.playerPosition = moveDistance + CurrentFloor(player).Count;
+                player.playerPosition = moveDistance + CurrentFloor(player).Count - 1;
             }
             // 플레이어의 현재위치에서 이동한 거리가 필드의 할당된 Dictionary의 최대범위 보다 크다면
             else if (moveDistance > CurrentFloor(player).Count)
             {
-                player.playerPosition = moveDistance - CurrentFloor(player).Count;
+                player.playerPosition = moveDistance - CurrentFloor(player).Count - 1;
             }
+
             // 체크포인트를 플레이어가 이동할 위치로 이동합니다
             checkPoint.transform.parent = GetPlayerTransform(player);
             checkPoint.transform.position = GetPlayerTransform(player).position;
@@ -223,34 +216,26 @@ public class FieldUtility : MonoBehaviour
             // 개인 필드는 총 3칸
             if (player.CheckFloor() == Player.Floor.PrivateNormal)
             {
-                if (player.playerPosition + moveDistance < player.playerDefaultStartingPoint[0])
+                if (moveDistance < player.playerDefaultStartingPoint)
                 {
-                    player.playerPosition = player.playerDefaultStartingPoint[0] + 2;
+                    player.playerPosition = moveDistance + player.playerDefaultStartingPoint;
                 }
-                else if (player.playerPosition + moveDistance > player.playerDefaultStartingPoint[0] + 2)
+                else if (moveDistance > player.playerDefaultStartingPoint + 2)
                 {
-                    player.playerPosition = player.playerDefaultStartingPoint[0];
-                }
-                else
-                {
-                    player.playerPosition += moveDistance;
+                    player.playerPosition = moveDistance - player.playerDefaultStartingPoint + 2;
                 }
             }
             else if (player.CheckFloor() == Player.Floor.PrivateBoss)
             {
-                if (player.playerPosition + moveDistance < player.playerDefaultStartingPoint[1])
+                if (player.playerPosition + moveDistance < player.playerDefaultStartingPoint)
                 {
-                    player.playerPosition = player.playerDefaultStartingPoint[1] + 2;
+                    player.playerPosition = player.playerDefaultStartingPoint + 2;
                     moveDistance = 0;
                 }
-                else if (player.playerPosition + moveDistance > player.playerDefaultStartingPoint[1] + 2)
+                else if (player.playerPosition + moveDistance > player.playerDefaultStartingPoint + 2)
                 {
-                    player.playerPosition = player.playerDefaultStartingPoint[1];
+                    player.playerPosition = player.playerDefaultStartingPoint;
                     moveDistance = 0;
-                }
-                else
-                {
-                    player.playerPosition += moveDistance;
                 }
 
             }
@@ -262,16 +247,10 @@ public class FieldUtility : MonoBehaviour
         // 플레이어 이동처리
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            player.transform.parent = GetPlayerTransform(player);            
-            player.transform.position = GetPlayerTransform(player).position;
+            player.PlayerTransform(GetPlayerTransform(player), GetPlayerTransform(player).position);
             cost -= preCost;
-            if(player.startPoint)
-            {
-                player.FloorToField(player.CheckFloor());
-                PlayerStart(player);
-                player.startPoint = false;
-            }
-            return;
+            if(preCost == 0)
+                return;
         }   
     }    
 

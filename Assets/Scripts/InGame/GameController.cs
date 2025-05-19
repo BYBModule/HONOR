@@ -14,10 +14,11 @@ public class GameController : MonoBehaviour
 
     // 주사위 클래스
     Dice dice;
+    Monster boss;
     // 필드와 관련된 처리를 하기위한 클래스 
-    FieldUtility fieldUtility;
+    public FieldUtility fieldUtility;
     // 몬스터 전투를 위한 클래스
-    MonsterBattle monsterBattle;
+    public MonsterBattle monsterBattle;
 
     // 행동 코스트를 사용해서 할 수 있는 행동
     enum CostAction
@@ -29,13 +30,11 @@ public class GameController : MonoBehaviour
         // 직업 특수 능력사용
         ActiveClassAbility,
 
-        Default,
+        UpFloor,
     }
 
     // 카메라
     public CinemachineCamera cinemachine;
-    // 보스 오브젝트
-    public GameObject boss;
     // 플레이어 UI
     public GameObject playerUI;
     // 주사위 프리팹
@@ -51,7 +50,7 @@ public class GameController : MonoBehaviour
     //
     public TextMeshProUGUI currentTurnCount;
     // 현재 턴인 플레이어
-    private Player currentPlayer;
+    public Player currentPlayer;
 
     // 게임이 진행된 턴 카운트
     private int turnCount = 1;
@@ -126,8 +125,9 @@ public class GameController : MonoBehaviour
                 Action(CostAction.Move, currentPlayer.actionCost);
                 LookField(currentPlayer);
             }
-            if (turnLimit >= 10 || isTurnEnd)
+            if (turnLimit >= 100 || isTurnEnd)
             {
+
                 PlayerTurnEnd();
             }
         }
@@ -147,7 +147,7 @@ public class GameController : MonoBehaviour
             case CostAction.Move:
                 if (cost > 0)
                 {
-                    fieldUtility.PlayerMove(currentPlayer, cost, preCost);
+                    fieldUtility.PlayerMove(currentPlayer, cost, this.preCost);
                 }
                 else
                 {
@@ -179,7 +179,8 @@ public class GameController : MonoBehaviour
                     return;
                 }
                 break;
-            case CostAction.Default:
+            case CostAction.UpFloor:
+                UpFloor(currentPlayer);
                 break;
         }
     }
@@ -189,7 +190,6 @@ public class GameController : MonoBehaviour
     }
     IEnumerator TurnStart()
     {
-
         if (!startTurn)
         {
             // 주사위를 굴리고 눈금값을 플레이어 행동코스트에 저장
@@ -201,8 +201,10 @@ public class GameController : MonoBehaviour
             // 다이스 UI > 플레이어 UI 전환
             ChangeUI(false);
             // 플레이어에게 카메라 위치 전환
-            cinemachine.Lens.FieldOfView = 40;
+            this.preCost = currentPlayer.actionCost;
+            cinemachine.Lens.FieldOfView = 30;
             cinemachine.Target.TrackingTarget = currentPlayer.transform;
+            monsterBattle.SpawnMonster(fieldUtility.normalField);
             startTurn = true;
         }
         yield return new WaitForSeconds(1.0f);
@@ -222,10 +224,35 @@ public class GameController : MonoBehaviour
     {
         currentPlayer.player_Class.ClassAbility();
     }
-
+    private void UpFloor(Player player)
+    {
+        if (player.CheckFloor() == Player.Floor.PrivateNormal)
+        {
+            player.ChangeFloor(Player.Floor.Normal);
+        }
+        else if (player.CheckFloor() == Player.Floor.Normal)
+        {
+            player.ChangeFloor(Player.Floor.PrivateBoss);
+            player.playerPosition = player.playerDefaultStartingPoint;
+        }
+        else if (player.CheckFloor() == Player.Floor.PrivateBoss)
+        {
+            player.ChangeFloor(Player.Floor.Boss);
+        }
+        else
+        {
+            player.ChangeFloor(Player.Floor.PrivateNormal);
+            player.playerPosition = player.playerDefaultStartingPoint;
+        }
+            isTurnEnd = true;
+    }
     // 턴 종료 시 실행되는 메서드
     public void PlayerTurnEnd()
     {
+        if (IsVictory())
+        {
+            Victory();
+        }
         // 주사위 굴리기위한 상태값을 true로 전환
         diceRoll = true;
         // 현재 플레이어의 코스트를 0으로 전환
@@ -242,7 +269,7 @@ public class GameController : MonoBehaviour
         preCost = 0;
         // 주사위를 바라보기위한 카메라값
         cinemachine.Lens.FieldOfView = 120;
-        cinemachine.Target.TrackingTarget = dicePrefab.transform;
+        cinemachine.Target.TrackingTarget = dicePrefab.transform.parent;
         // 현재 턴인 플레이어를 다음 턴의 플레이어로 전환
         ChangePlayer(currentPlayerCount);
         // 플레이어 UI를 주사위 UI로 전환환
@@ -264,9 +291,10 @@ public class GameController : MonoBehaviour
             this.currentPlayerCount = 0;
             // 모든 플레이어가 행동을 끝냈기 때문에 턴 카운트를 1 증가 시킴
             turnCount++;
+            monsterBattle.UpdateMonsterState(turnCount);
         }
     }
-    // 스텟 코스트로 능력치를 조절
+    // 스텟 코스트로 능력치를 조절, 현재 플레이어의 정보를 출력
     private void StatusAdjustment(Player player, int Cost)
     {
         if (Input.GetKeyDown(KeyCode.C))
@@ -280,11 +308,23 @@ public class GameController : MonoBehaviour
     // 승리
     private void Victory()
     {
+        // 승리 후 UI출력, 이펙트
+        // 종료 후 씬 전환
+    }
+    // 승리 체크
+    private bool IsVictory()
+    {
         // currentPlayer 승리
+        if (currentPlayer.eliteKillCount >= 30 || !boss.isActiveAndEnabled)
+        {
+            return true;
+        }
+        return false;
     }
     // 화면 전환
     private void LookField(Player player)
     {
+        // 텝키로 현재 필드의 전체 맵 또는 플레이어 위치를 바라봅니다.
         if (isFieldCamera)
         {
             if (Input.GetKeyDown(KeyCode.Tab))
@@ -292,7 +332,7 @@ public class GameController : MonoBehaviour
                 Transform cameraTarget = fieldUtility.FieldCameraLookAt(player);
                 if (cameraTarget != null)
                 {
-                    cinemachine.Lens.FieldOfView = 60;
+                    cinemachine.Lens.FieldOfView = 40;
                     cinemachine.Target.TrackingTarget = cameraTarget;
                     isFieldCamera = false;
                 }
@@ -302,7 +342,7 @@ public class GameController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                cinemachine.Lens.FieldOfView = 40;
+                cinemachine.Lens.FieldOfView = 30;
                 cinemachine.Target.TrackingTarget = fieldUtility.checkPoint.transform;
                 isFieldCamera = true;
             }
