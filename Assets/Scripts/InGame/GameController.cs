@@ -11,7 +11,16 @@ using UnityEngine.UI;
 // 게임승리, 사망 확인 > 다음 턴 플레이어 확인 > 플레이어 전환 > 처음으로부터 반복
 public class GameController : MonoBehaviour
 {
-
+    // 인게임 컨트롤러 인스턴스
+    public static GameController Instance
+    {
+        get;
+        private set;
+    }
+    public void ResetPlayData()
+    {
+        Instance = null;
+    }
     // 주사위 클래스
     Dice dice;
     Monster boss;
@@ -88,10 +97,12 @@ public class GameController : MonoBehaviour
     // 현재 Floor번호
     public int currentFloorCount = 0;
     public int currentPlayerCount = 0;
-
     public int preCost = 0;
+
     void Awake()
     {
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
         turnEnd.onClick.AddListener(ClickEndButton);
         for (int i = 0; i < playerList.Count; i++)
         {

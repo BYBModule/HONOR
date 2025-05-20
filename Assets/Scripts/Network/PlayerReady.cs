@@ -5,7 +5,6 @@ public class Network : NetworkManager
 {
     public void OpenServer()
     {
-        
 
     }
     public void OpenHost()

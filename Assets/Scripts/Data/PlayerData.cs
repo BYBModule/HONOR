@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerData
 {
+    public ulong clienId;
     // 플레이어 체력
     public int playerHp;
     

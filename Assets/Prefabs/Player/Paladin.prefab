@@ -4432,7 +4432,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4393825405062330}
   - component: {fileID: 95112385391603778}
-  - component: {fileID: 4207843733400559686}
   m_Layer: 0
   m_Name: Paladin
   m_TagString: Untagged
@@ -4538,29 +4537,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4207843733400559686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1441277013190686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee84b18eef738eb45a1e67affdf3f83f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerId: 0
-  cardGameManager: {fileID: 0}
-  playerClass: 3
-  playerDefaultStartingPoint: 0
-  playerPosition: 0
-  currentFloor: 2
-  eliteKillCount: 0
-  actionCost: 0
-  statusCost: 0
-  startPoint: 1
-  isInfo: 1
 --- !u!1 &1451651417925120
 GameObject:
   m_ObjectHideFlags: 0

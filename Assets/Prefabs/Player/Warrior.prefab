@@ -1305,7 +1305,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4461164902581218}
   - component: {fileID: 95151759184272236}
-  - component: {fileID: -3468586976561687967}
   m_Layer: 0
   m_Name: Warrior
   m_TagString: Untagged
@@ -1411,29 +1410,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-3468586976561687967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1196716162819498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee84b18eef738eb45a1e67affdf3f83f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerId: 0
-  cardGameManager: {fileID: 0}
-  playerClass: 0
-  playerDefaultStartingPoint: 0
-  playerPosition: 0
-  currentFloor: 2
-  eliteKillCount: 0
-  actionCost: 0
-  statusCost: 0
-  startPoint: 1
-  isInfo: 1
 --- !u!1 &1204550668408728
 GameObject:
   m_ObjectHideFlags: 0

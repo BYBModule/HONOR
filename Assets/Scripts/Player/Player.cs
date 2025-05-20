@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.Multiplayer.Center.Common;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -20,17 +21,17 @@ public class Player : MonoBehaviour
     public enum ClassName
     {
         // 전사
-        Warrior,
-        // 궁수
-        Archor,
-        // 도적
-        Thief,
-        // 성기사
-        Paladin,
+        Warrior = 1,
         // 사제
-        Priest,
+        Priest = 2,
+        // 성기사
+        Paladin = 3,
         // 대부호
-        Millionaire,
+        Millionaire = 4,
+        // 도적
+        Thief = 5,
+        // 궁수
+        Archor = 6,
     }
     // 카드 게임 매니저
     public CardGameManager cardGameManager;
@@ -69,6 +70,8 @@ public class Player : MonoBehaviour
     {
         // 플레이어 인스턴스 생성
         Instance = this;
+        Instantiate(FindAnyObjectByType<CreatePlayer>().currentClassPrefab, transform.position, quaternion.identity, transform);
+        playerClass = FindAnyObjectByType<CreatePlayer>().className;
         // 플레이어 데이터 생성
         playerData = new PlayerData();
         SelectClass(playerClass);
